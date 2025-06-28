@@ -49,39 +49,46 @@ const LandingPage: React.FC = () => {
 
   const testimonials = [
     {
-      name: 'Riya Kapoor',
-      role: 'Final Year CSE Student, VIT Vellore',
-      content: 'The custom task system lets me get exactly the help I need for my projects.',
-      rating: 5,
-      initials: 'RK',
+      name: 'Priya Sharma',
+      role: 'Graphic Designer, Delhi',
+      content: 'TimeBank helped me find the perfect coding mentor. The credit system is transparent and fair.',
+      rating: 4,
+      initials: 'PS',
     },
     {
-      name: 'Rohit Patil',
-      role: 'Web Developer, Pune',
-      content: 'I earned credits building websites and used them for interview prep. Perfect exchange!',
+      name: 'Arjun Mehta',
+      role: 'Startup Founder, Bangalore',
+      content: 'Great platform for getting quick help with design work. Love the flexibility of setting my own rates.',
       rating: 5,
-      initials: 'RP',
+      initials: 'AM',
     },
     {
-      name: 'Ananya Roy',
-      role: 'Freelance Designer, Kolkata',
-      content: 'Love how I can set my own prices and work both online and offline.',
-      rating: 5,
-      initials: 'AR',
+      name: 'Kavya Reddy',
+      role: 'Marketing Manager, Hyderabad',
+      content: 'Found amazing tutors for data analysis. The community is supportive and professional.',
+      rating: 4,
+      initials: 'KR',
     },
     {
-      name: 'Sneha Nair',
-      role: 'NGO Volunteer, Kochi',
-      content: 'The community is amazing - everyone helps each other grow.',
-      rating: 5,
-      initials: 'SN',
+      name: 'Rohit Singh',
+      role: 'Software Engineer, Mumbai',
+      content: 'Good concept but wish there were more tech experts available in my area.',
+      rating: 3,
+      initials: 'RS',
     },
     {
-      name: 'Aditya Joshi',
-      role: 'AI/ML Enthusiast, Mumbai',
-      content: 'Got exactly the coding help I needed. The credit system is fair and transparent.',
+      name: 'Anita Gupta',
+      role: 'Content Writer, Pune',
+      content: 'Excellent platform! Earned credits by helping with writing projects and used them for web development help.',
       rating: 5,
-      initials: 'AJ',
+      initials: 'AG',
+    },
+    {
+      name: 'Vikram Joshi',
+      role: 'Student, Chennai',
+      content: 'Helpful for getting assignment guidance. Sometimes response times could be faster.',
+      rating: 4,
+      initials: 'VJ',
     },
   ];
 
@@ -524,7 +531,7 @@ const LandingPage: React.FC = () => {
               What Our Community Says
             </h2>
             <p className="text-xl text-gray-600">
-              Real stories from TimeBank members across India
+              Real feedback from TimeBank members across India
             </p>
           </div>
 
@@ -532,9 +539,17 @@ const LandingPage: React.FC = () => {
             {testimonials.map((testimonial, index) => (
               <div key={index} className="bg-white rounded-xl p-6 border border-gray-100 shadow-md hover:shadow-lg transition-shadow duration-200">
                 <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className={`w-5 h-5 ${
+                        i < testimonial.rating 
+                          ? 'text-yellow-400 fill-current' 
+                          : 'text-gray-300'
+                      }`} 
+                    />
                   ))}
+                  <span className="ml-2 text-sm text-gray-600">({testimonial.rating}/5)</span>
                 </div>
                 <p className="text-gray-700 mb-6 leading-relaxed">"{testimonial.content}"</p>
                 <div className="flex items-center space-x-3">
