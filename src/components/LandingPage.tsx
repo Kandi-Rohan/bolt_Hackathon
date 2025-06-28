@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Award, ArrowRight, CheckCircle, Star, Zap, TrendingUp, Heart } from 'lucide-react';
+import { Clock, Users, Award, ArrowRight, CheckCircle, Star, Zap, TrendingUp, Heart, Sparkles, Gift, CreditCard } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -381,33 +381,66 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg p-8 border border-blue-100">
-              <div className="flex items-center space-x-4 mb-8">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Time Credit Wallet</h3>
-                  <p className="text-gray-600 text-sm">Your community currency</p>
-                </div>
-              </div>
+            <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-8 border border-blue-200 overflow-hidden">
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full translate-y-12 -translate-x-12"></div>
               
-              <div className="text-center py-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">5</div>
-                <div className="text-gray-600 font-medium">Starting Credits</div>
-                <div className="mt-4 text-sm text-gray-500">
-                  Buy more as you need them!
+              <div className="relative z-10">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <Clock className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Time Credit Wallet</h3>
+                    <p className="text-gray-600">Your community currency</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="mt-6 grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-green-600">Earn</div>
-                  <div className="text-xs text-gray-500">Credits for helping</div>
+                
+                <div className="text-center py-10 bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl border border-blue-100 shadow-inner mb-6">
+                  <div className="relative">
+                    <div className="text-7xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 animate-pulse">
+                      5
+                    </div>
+                    <div className="absolute -top-2 -right-8">
+                      <Sparkles className="w-6 h-6 text-yellow-500 animate-bounce" />
+                    </div>
+                    <div className="absolute -bottom-2 -left-8">
+                      <Gift className="w-5 h-5 text-green-500 animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="text-lg font-bold text-gray-800 mb-2">Starting Credits</div>
+                  <div className="text-sm text-gray-600 bg-white/70 px-4 py-2 rounded-full inline-block">
+                    🎉 Free welcome bonus!
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">Spend</div>
-                  <div className="text-xs text-gray-500">Credits for assistance</div>
+                
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-2xl font-bold text-green-700 mb-1">Earn</div>
+                    <div className="text-xs text-green-600">Help others & grow your wallet</div>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
+                      <Star className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-2xl font-bold text-purple-700 mb-1">Spend</div>
+                    <div className="text-xs text-purple-600">Get help when you need it</div>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <button
+                    onClick={handleGetStarted}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 mx-auto"
+                  >
+                    <CreditCard className="w-5 h-5" />
+                    <span>Start Your Journey</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
