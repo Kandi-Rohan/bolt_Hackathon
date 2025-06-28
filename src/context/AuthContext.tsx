@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types';
+import { User, Badge } from '../types';
+import { checkAndAwardBadges } from '../utils/badges';
 
 interface AuthContextType {
   user: User | null;
@@ -7,6 +8,7 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string, city: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  awardBadges: (totalTasksCompleted: number, totalCreditsEarned: number) => Badge[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,7 +31,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const savedUser = localStorage.getItem('timebank_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      // Ensure user has required new fields
+      const updatedUser = {
+        ...parsedUser,
+        badges: parsedUser.badges || [],
+        reviews: parsedUser.reviews || [],
+        rating: parsedUser.rating || 0,
+        reviewCount: parsedUser.reviewCount || 0
+      };
+      setUser(updatedUser);
+      localStorage.setItem('timebank_user', JSON.stringify(updatedUser));
     }
   }, []);
 
@@ -39,8 +51,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const foundUser = users.find((u: User) => u.email === email);
     
     if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('timebank_user', JSON.stringify(foundUser));
+      // Ensure user has required new fields
+      const updatedUser = {
+        ...foundUser,
+        badges: foundUser.badges || [],
+        reviews: foundUser.reviews || [],
+        rating: foundUser.rating || 0,
+        reviewCount: foundUser.reviewCount || 0
+      };
+      setUser(updatedUser);
+      localStorage.setItem('timebank_user', JSON.stringify(updatedUser));
       return true;
     }
     return false;
@@ -66,6 +86,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       totalTimeGiven: 0,
       totalTimeReceived: 0,
       joinDate: new Date().toISOString(),
+      badges: [],
+      reviews: [],
+      rating: 0,
+      reviewCount: 0
     };
 
     users.push(newUser);
@@ -96,8 +120,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const awardBadges = (totalTasksCompleted: number, totalCreditsEarned: number): Badge[] => {
+    if (!user) return [];
+    
+    const newBadges = checkAndAwardBadges(user, totalTasksCompleted, totalCreditsEarned);
+    
+    if (newBadges.length > 0) {
+      const updatedUser = {
+        ...user,
+        badges: [...user.badges, ...newBadges]
+      };
+      updateUser(updatedUser);
+    }
+    
+    return newBadges;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updateUser, awardBadges }}>
       {children}
     </AuthContext.Provider>
   );

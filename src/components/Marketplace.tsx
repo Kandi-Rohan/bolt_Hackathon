@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle, User, MessageCircle, Code, Palette, BookOpen, Briefcase, PenTool, Heart } from 'lucide-react';
+import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle, User, MessageCircle, Code, Palette, BookOpen, Briefcase, PenTool, Heart, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useToast } from '../hooks/useToast';
+import TaskStatusBadge from './TaskStatusBadge';
+import ReviewModal from './ReviewModal';
 
 const Marketplace: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,9 +14,18 @@ const Marketplace: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
   const [filterMode, setFilterMode] = useState('all');
+  const [reviewModal, setReviewModal] = useState<{
+    isOpen: boolean;
+    taskId: string;
+    taskTitle: string;
+    recipientId: string;
+    recipientName: string;
+    type: 'helper' | 'requester';
+  } | null>(null);
   
-  const { user } = useAuth();
-  const { offers, requests, addOffer, addRequest, createMatch, matches } = useData();
+  const { user, awardBadges } = useAuth();
+  const { offers, requests, addOffer, addRequest, createMatch, matches, addReview, markTaskCompleted, addTransaction } = useData();
+  const { showSuccess, showError, showInfo } = useToast();
 
   // Form states
   const [offerForm, setOfferForm] = useState({
@@ -59,10 +71,10 @@ const Marketplace: React.FC = () => {
 
   // Empty state SVG component
   const EmptyStateIllustration = ({ type }: { type: 'offers' | 'requests' | 'tasks' }) => (
-    <div className="text-center py-12">
+    <div className="text-center py-8 sm:py-12">
       <svg
         viewBox="0 0 200 150"
-        className="w-32 h-24 mx-auto mb-4 opacity-60"
+        className="w-24 h-18 sm:w-32 sm:h-24 mx-auto mb-4 opacity-60"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -130,7 +142,7 @@ const Marketplace: React.FC = () => {
       userId: user.id,
       userName: user.name,
       userCity: user.city || 'Location not set',
-      status: 'active',
+      status: 'open',
       isRemote: offerForm.mode === 'online' || offerForm.mode === 'both',
     });
 
@@ -142,7 +154,7 @@ const Marketplace: React.FC = () => {
       location: '',
     });
 
-    alert('Offer posted successfully!');
+    showSuccess('Offer Posted!', 'Your help offer has been posted successfully.');
   };
 
   const handleRequestSubmit = (e: React.FormEvent) => {
@@ -150,7 +162,7 @@ const Marketplace: React.FC = () => {
     if (!user) return;
 
     if (user.timeCredits < requestForm.credits) {
-      alert('Insufficient credits! Please buy more credits to post this request.');
+      showError('Insufficient Credits', 'Please buy more credits to post this request.');
       return;
     }
 
@@ -159,7 +171,7 @@ const Marketplace: React.FC = () => {
       userId: user.id,
       userName: user.name,
       userCity: user.city || 'Location not set',
-      status: 'active',
+      status: 'open',
       isRemote: requestForm.mode === 'online' || requestForm.mode === 'both',
     });
 
@@ -171,27 +183,82 @@ const Marketplace: React.FC = () => {
       location: '',
     });
 
-    alert('Request posted successfully!');
+    showSuccess('Request Posted!', 'Your help request has been posted successfully.');
   };
 
-  const handleConnect = (type: 'offer' | 'request', itemId: string, otherUserId: string, otherUserName: string, taskTitle: string) => {
+  const handleConnect = (type: 'offer' | 'request', itemId: string, otherUserId: string, otherUserName: string, taskTitle: string, credits: number) => {
     if (!user) return;
     
     if (type === 'offer') {
       const offer = offers.find(o => o.id === itemId);
       if (offer && user.timeCredits >= offer.credits) {
         createMatch('', itemId, user.id, otherUserId);
-        alert(`Connection request sent to ${otherUserName} for "${taskTitle}"!`);
+        showSuccess('✅ Task Accepted', `You'll earn ${credits} credits when completed!`);
       } else {
-        alert('Insufficient credits! Please buy more credits.');
+        showError('Insufficient Credits', 'Please buy more credits to request this help.');
       }
     } else {
       const request = requests.find(r => r.id === itemId);
       if (request) {
         createMatch(itemId, '', otherUserId, user.id);
-        alert(`Offer to help ${otherUserName} with "${taskTitle}" sent!`);
+        showSuccess('✅ Offer Sent', `Your offer to help ${otherUserName} has been sent!`);
       }
     }
+  };
+
+  const handleCompleteTask = (taskId: string, type: 'offer' | 'request', recipientId: string, recipientName: string, taskTitle: string) => {
+    markTaskCompleted(taskId, type);
+    
+    // Open review modal
+    setReviewModal({
+      isOpen: true,
+      taskId,
+      taskTitle,
+      recipientId,
+      recipientName,
+      type: type === 'offer' ? 'requester' : 'helper'
+    });
+
+    // Award badges and add transaction
+    if (type === 'offer') {
+      const offer = offers.find(o => o.id === taskId);
+      if (offer) {
+        addTransaction({
+          fromUserId: recipientId,
+          toUserId: user!.id,
+          amount: offer.credits,
+          taskType: offer.taskType,
+          description: `Earned credits for: ${offer.taskType}`,
+          type: 'earned'
+        });
+
+        // Check for new badges
+        const newBadges = awardBadges(user!.totalTimeGiven + 1, user!.timeCredits + offer.credits);
+        if (newBadges.length > 0) {
+          showSuccess('🏆 Badge Earned!', `You earned ${newBadges.length} new badge${newBadges.length > 1 ? 's' : ''}!`);
+        }
+      }
+    }
+
+    showSuccess('✅ Task Completed', 'Great job! Please leave a review for your experience.');
+  };
+
+  const handleReviewSubmit = (rating: number, comment: string) => {
+    if (!reviewModal || !user) return;
+
+    addReview({
+      fromUserId: user.id,
+      fromUserName: user.name,
+      toUserId: reviewModal.recipientId,
+      taskId: reviewModal.taskId,
+      taskTitle: reviewModal.taskTitle,
+      rating,
+      comment,
+      type: reviewModal.type
+    });
+
+    showSuccess('Review Submitted', 'Thank you for your feedback!');
+    setReviewModal(null);
   };
 
   // Get user's accepted requests (where they are the helper)
@@ -203,9 +270,9 @@ const Marketplace: React.FC = () => {
     })
     .filter(Boolean);
 
-  // Filter logic
+  // Filter logic - only show open tasks
   const filteredOffers = offers.filter(offer => {
-    if (offer.userId === user?.id) return false;
+    if (offer.userId === user?.id || offer.status !== 'open') return false;
     
     const matchesSearch = offer.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          offer.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -220,7 +287,7 @@ const Marketplace: React.FC = () => {
   });
 
   const filteredRequests = requests.filter(request => {
-    if (request.userId === user?.id) return false;
+    if (request.userId === user?.id || request.status !== 'open') return false;
     
     const matchesSearch = request.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          request.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -242,24 +309,24 @@ const Marketplace: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl p-4 sm:p-8 text-white shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Skill Marketplace</h1>
-            <p className="text-blue-100 text-lg">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Skill Marketplace</h1>
+            <p className="text-blue-100 text-base sm:text-lg">
               Connect with your community through custom task exchange
             </p>
           </div>
-          <div className="mt-4 md:mt-0 flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-md rounded-xl px-4 py-2">
-              <Clock className="w-5 h-5" />
-              <span className="font-semibold">{user?.timeCredits || 0} Credits</span>
+          <div className="mt-4 md:mt-0 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-md rounded-xl px-3 sm:px-4 py-2">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="font-semibold text-sm sm:text-base">{user?.timeCredits || 0} Credits</span>
             </div>
             <Link
               to="/buy-credits"
-              className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              className="bg-white text-blue-600 px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2 text-sm sm:text-base"
             >
               <CreditCard className="w-4 h-4" />
               <span>Buy Credits</span>
@@ -269,18 +336,18 @@ const Marketplace: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm">
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 flex items-center justify-center space-x-2 py-2 sm:py-3 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 ${
               activeTab === tab.id
                 ? 'bg-white text-gray-900 shadow-md'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <span>{tab.name}</span>
+            <span className="whitespace-nowrap">{tab.name}</span>
             {tab.count !== null && (
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                 activeTab === tab.id ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'
@@ -296,11 +363,11 @@ const Marketplace: React.FC = () => {
       {activeTab === 'accepted' && (
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow-md border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 sm:p-6 border-b border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900">Tasks You've Accepted</h2>
               <p className="text-gray-600 text-sm mt-1">Requests you've agreed to help with</p>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {userAcceptedRequests.length === 0 ? (
                 <EmptyStateIllustration type="tasks" />
               ) : (
@@ -311,34 +378,32 @@ const Marketplace: React.FC = () => {
                     
                     return (
                       <div key={request.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-blue-50">
-                        <div className="flex justify-between items-start mb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 space-y-3 sm:space-y-0">
                           <div className="flex items-center space-x-3">
-                            <div className={`w-12 h-12 bg-gradient-to-r ${taskIconData.color} rounded-xl flex items-center justify-center shadow-md`}>
-                              <TaskIcon className="w-6 h-6 text-white" />
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${taskIconData.color} rounded-xl flex items-center justify-center shadow-md`}>
+                              <TaskIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                             </div>
-                            <div>
-                              <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-semibold text-gray-900 truncate">{request.taskType}</h3>
                               <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                                <User className="w-4 h-4" />
-                                <span>Requested by: <strong>{request.userName}</strong></span>
+                                <User className="w-4 h-4 flex-shrink-0" />
+                                <span className="truncate">Requested by: <strong>{request.userName}</strong></span>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                              Accepted
-                            </span>
+                          <div className="flex items-center space-x-2 flex-shrink-0">
+                            <TaskStatusBadge status={request.status} size="sm" />
                             <span className="text-green-600 font-medium text-sm">{request.credits} credits</span>
                           </div>
                         </div>
                         
                         <p className="text-gray-600 text-sm mb-3">{request.description}</p>
                         
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-500">
                             <span className="flex items-center">
                               <MapPin className="w-4 h-4 mr-1" />
-                              {request.location || request.userCity}
+                              <span className="truncate">{request.location || request.userCity}</span>
                             </span>
                             <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                               request.mode === 'online' ? 'bg-green-100 text-green-700' :
@@ -351,10 +416,21 @@ const Marketplace: React.FC = () => {
                             </span>
                           </div>
                           
-                          <button className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
-                            <MessageCircle className="w-4 h-4" />
-                            <span>Contact</span>
-                          </button>
+                          <div className="flex space-x-2">
+                            <button className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
+                              <MessageCircle className="w-4 h-4" />
+                              <span>Contact</span>
+                            </button>
+                            {request.status === 'in_progress' && (
+                              <button
+                                onClick={() => handleCompleteTask(request.id, 'request', request.userId, request.userName, request.taskType)}
+                                className="flex items-center space-x-1 px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                <span>Complete</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -370,8 +446,8 @@ const Marketplace: React.FC = () => {
       {activeTab === 'browse' && (
         <div className="space-y-6">
           {/* Filters */}
-          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -394,7 +470,7 @@ const Marketplace: React.FC = () => {
                 />
               </div>
               
-              <div className="relative">
+              <div className="relative sm:col-span-2 lg:col-span-1">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <select
                   value={filterMode}
@@ -411,15 +487,15 @@ const Marketplace: React.FC = () => {
 
           {/* Offers Section */}
           <div className="bg-white rounded-xl shadow-md border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 sm:p-6 border-b border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900">Available Help Offers</h2>
               <p className="text-gray-600 text-sm mt-1">People ready to share their skills</p>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {filteredOffers.length === 0 ? (
                 <EmptyStateIllustration type="offers" />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {filteredOffers.map((offer) => {
                     const taskIconData = getTaskIcon(offer.taskType);
                     const TaskIcon = taskIconData.icon;
@@ -427,48 +503,46 @@ const Marketplace: React.FC = () => {
                     return (
                       <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
                         <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm`}>
+                          <div className="flex items-center space-x-3 min-w-0 flex-1">
+                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm flex-shrink-0`}>
                               <TaskIcon className="w-5 h-5 text-white" />
                             </div>
-                            <h3 className="font-semibold text-gray-900">{offer.taskType}</h3>
+                            <h3 className="font-semibold text-gray-900 truncate">{offer.taskType}</h3>
                           </div>
-                          <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
+                          <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium flex-shrink-0 ml-2">
                             <Star className="w-3 h-3" />
-                            <span>{offer.credits} credits</span>
+                            <span>{offer.credits}</span>
                           </div>
                         </div>
                         
-                        <p className="text-gray-600 text-sm mb-3">{offer.description}</p>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{offer.description}</p>
                         
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <span className="flex items-center">
-                              <MapPin className="w-4 h-4 mr-1" />
-                              {offer.location || offer.userCity}
-                            </span>
-                            <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              offer.mode === 'online' ? 'bg-green-100 text-green-700' :
-                              offer.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
-                              'bg-purple-100 text-purple-700'
-                            }`}>
-                              {offer.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
-                              {offer.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
-                              {offer.mode}
-                            </span>
-                          </div>
+                        <div className="flex flex-wrap items-center gap-2 mb-3 text-sm text-gray-500">
+                          <span className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            <span className="truncate">{offer.location || offer.userCity}</span>
+                          </span>
+                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            offer.mode === 'online' ? 'bg-green-100 text-green-700' :
+                            offer.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                            'bg-purple-100 text-purple-700'
+                          }`}>
+                            {offer.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                            {offer.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                            {offer.mode}
+                          </span>
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-400 truncate">
                             by {offer.userName}
                           </div>
                           <button
-                            onClick={() => handleConnect('offer', offer.id, offer.userId, offer.userName, offer.taskType)}
+                            onClick={() => handleConnect('offer', offer.id, offer.userId, offer.userName, offer.taskType, offer.credits)}
                             disabled={!user || user.timeCredits < offer.credits}
-                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 sm:px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {!user || user.timeCredits < offer.credits ? 'Insufficient Credits' : 'Request Help'}
+                            {!user || user.timeCredits < offer.credits ? 'Need Credits' : 'Request Help'}
                           </button>
                         </div>
                       </div>
@@ -481,15 +555,15 @@ const Marketplace: React.FC = () => {
 
           {/* Requests Section */}
           <div className="bg-white rounded-xl shadow-md border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 sm:p-6 border-b border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900">Help Requests</h2>
               <p className="text-gray-600 text-sm mt-1">People looking for assistance</p>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {filteredRequests.length === 0 ? (
                 <EmptyStateIllustration type="requests" />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {filteredRequests.map((request) => {
                     const taskIconData = getTaskIcon(request.taskType);
                     const TaskIcon = taskIconData.icon;
@@ -497,45 +571,43 @@ const Marketplace: React.FC = () => {
                     return (
                       <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
                         <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm`}>
+                          <div className="flex items-center space-x-3 min-w-0 flex-1">
+                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm flex-shrink-0`}>
                               <TaskIcon className="w-5 h-5 text-white" />
                             </div>
-                            <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                            <h3 className="font-semibold text-gray-900 truncate">{request.taskType}</h3>
                           </div>
-                          <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium">
+                          <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium flex-shrink-0 ml-2">
                             <Star className="w-3 h-3" />
-                            <span>{request.credits} credits</span>
+                            <span>{request.credits}</span>
                           </div>
                         </div>
                         
-                        <p className="text-gray-600 text-sm mb-3">{request.description}</p>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{request.description}</p>
                         
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <span className="flex items-center">
-                              <MapPin className="w-4 h-4 mr-1" />
-                              {request.location || request.userCity}
-                            </span>
-                            <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              request.mode === 'online' ? 'bg-green-100 text-green-700' :
-                              request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
-                              'bg-purple-100 text-purple-700'
-                            }`}>
-                              {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
-                              {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
-                              {request.mode}
-                            </span>
-                          </div>
+                        <div className="flex flex-wrap items-center gap-2 mb-3 text-sm text-gray-500">
+                          <span className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            <span className="truncate">{request.location || request.userCity}</span>
+                          </span>
+                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            request.mode === 'online' ? 'bg-green-100 text-green-700' :
+                            request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                            'bg-purple-100 text-purple-700'
+                          }`}>
+                            {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                            {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                            {request.mode}
+                          </span>
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-400 truncate">
                             by {request.userName}
                           </div>
                           <button
-                            onClick={() => handleConnect('request', request.id, request.userId, request.userName, request.taskType)}
-                            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
+                            onClick={() => handleConnect('request', request.id, request.userId, request.userName, request.taskType, request.credits)}
+                            className="px-3 sm:px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
                           >
                             Offer Help
                           </button>
@@ -552,7 +624,7 @@ const Marketplace: React.FC = () => {
 
       {/* Offer Help Tab */}
       {activeTab === 'offer' && (
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Offer Your Help</h2>
           
           <form onSubmit={handleOfferSubmit} className="space-y-6">
@@ -649,8 +721,8 @@ const Marketplace: React.FC = () => {
 
       {/* Request Help Tab */}
       {activeTab === 'request' && (
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-2 sm:space-y-0">
             <h2 className="text-xl font-semibold text-gray-900">Request Help</h2>
             {user && user.timeCredits < requestForm.credits && (
               <div className="flex items-center space-x-2 text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">
@@ -751,6 +823,18 @@ const Marketplace: React.FC = () => {
             </button>
           </form>
         </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewModal && (
+        <ReviewModal
+          isOpen={reviewModal.isOpen}
+          onClose={() => setReviewModal(null)}
+          onSubmit={handleReviewSubmit}
+          taskTitle={reviewModal.taskTitle}
+          recipientName={reviewModal.recipientName}
+          type={reviewModal.type}
+        />
       )}
     </div>
   );

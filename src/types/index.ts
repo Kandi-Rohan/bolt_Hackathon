@@ -10,6 +10,33 @@ export interface User {
   totalTimeReceived: number;
   joinDate: string;
   avatar?: string;
+  badges: Badge[];
+  reviews: Review[];
+  rating: number;
+  reviewCount: number;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  earnedAt: string;
+  category: 'achievement' | 'milestone' | 'special';
+}
+
+export interface Review {
+  id: string;
+  fromUserId: string;
+  fromUserName: string;
+  toUserId: string;
+  taskId: string;
+  taskTitle: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  type: 'helper' | 'requester';
 }
 
 export interface TaskType {
@@ -38,7 +65,9 @@ export interface Offer {
   location?: string;
   isRemote: boolean;
   createdAt: string;
-  status: 'active' | 'in_progress' | 'completed';
+  status: 'open' | 'in_progress' | 'completed' | 'expired';
+  completedAt?: string;
+  expiresAt?: string;
 }
 
 export interface Request {
@@ -54,7 +83,9 @@ export interface Request {
   location?: string;
   isRemote: boolean;
   createdAt: string;
-  status: 'active' | 'matched' | 'completed';
+  status: 'open' | 'in_progress' | 'completed' | 'expired';
+  completedAt?: string;
+  expiresAt?: string;
 }
 
 export interface Transaction {
@@ -74,6 +105,15 @@ export interface Match {
   offerId: string;
   requesterId: string;
   helperId: string;
-  status: 'pending' | 'accepted' | 'completed';
+  status: 'pending' | 'accepted' | 'completed' | 'cancelled';
   createdAt: string;
+  completedAt?: string;
+}
+
+export interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'info' | 'warning';
+  title: string;
+  message: string;
+  duration?: number;
 }
