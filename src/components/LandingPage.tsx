@@ -49,48 +49,51 @@ const LandingPage: React.FC = () => {
 
   const testimonials = [
     {
+      name: 'Arjun Patel',
+      role: 'Software Engineer, Bangalore',
+      content: 'TimeBank helped me find excellent design help for my startup. The custom pricing system works perfectly.',
+      rating: 5,
+      initials: 'AP',
+    },
+    {
       name: 'Priya Sharma',
-      role: 'Graphic Designer, Delhi',
-      content: 'TimeBank helped me find the perfect coding mentor. The credit system is transparent and fair.',
+      role: 'Freelance Designer, Mumbai',
+      content: 'Great platform for offering my design services. I love how I can set my own credit rates.',
       rating: 4,
       initials: 'PS',
     },
     {
-      name: 'Arjun Mehta',
-      role: 'Startup Founder, Bangalore',
-      content: 'Great platform for getting quick help with design work. Love the flexibility of setting my own rates.',
-      rating: 5,
-      initials: 'AM',
-    },
-    {
-      name: 'Kavya Reddy',
-      role: 'Marketing Manager, Hyderabad',
-      content: 'Found amazing tutors for data analysis. The community is supportive and professional.',
+      name: 'Rohit Kumar',
+      role: 'Student, Delhi',
+      content: 'Found amazing tutors for coding help. The community is very supportive and responsive.',
       rating: 4,
-      initials: 'KR',
+      initials: 'RK',
     },
     {
-      name: 'Rohit Singh',
-      role: 'Software Engineer, Mumbai',
-      content: 'Good concept but wish there were more tech experts available in my area.',
+      name: 'Sneha Reddy',
+      role: 'Marketing Professional, Hyderabad',
+      content: 'Good concept but sometimes takes time to find the right match for specific skills.',
       rating: 3,
-      initials: 'RS',
+      initials: 'SR',
     },
     {
-      name: 'Anita Gupta',
-      role: 'Content Writer, Pune',
-      content: 'Excellent platform! Earned credits by helping with writing projects and used them for web development help.',
+      name: 'Vikash Singh',
+      role: 'Entrepreneur, Pune',
+      content: 'Excellent for getting quick business advice and consulting. The credit system is transparent.',
       rating: 5,
-      initials: 'AG',
+      initials: 'VS',
     },
     {
-      name: 'Vikram Joshi',
-      role: 'Student, Chennai',
-      content: 'Helpful for getting assignment guidance. Sometimes response times could be faster.',
+      name: 'Kavya Nair',
+      role: 'Content Creator, Kochi',
+      content: 'Helpful platform but wish there were more creative professionals in smaller cities.',
       rating: 4,
-      initials: 'VJ',
+      initials: 'KN',
     },
   ];
+
+  // Calculate average rating
+  const averageRating = testimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / testimonials.length;
 
   return (
     <div className="min-h-screen bg-[#F0F9FF]">
@@ -152,42 +155,127 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
-              Exchange Skills.{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Empower Each Other.
+      <section id="home" className="py-16 md:py-24 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full -translate-x-48 -translate-y-48 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-green-200/20 to-blue-200/20 rounded-full translate-x-40 translate-y-40 blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-5xl mx-auto">
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center space-x-6 mb-8">
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">
+                <div className="flex -space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold text-gray-700">{averageRating.toFixed(1)}/5</span>
+                <span className="text-sm text-gray-600">({testimonials.length} reviews)</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">
+                <Users className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-semibold text-gray-700">500+ Active Members</span>
+              </div>
+            </div>
+
+            {/* Main headline */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight">
+              Your Skills Have{' '}
+              <span className="relative">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent">
+                  Real Value
+                </span>
+                <div className="absolute -bottom-2 left-0 right-0 h-3 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 rounded-full opacity-30"></div>
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mt-4 leading-relaxed">
-              Earn Time Credits by helping your community. Spend them on what you need.
+            
+            {/* Subheadline */}
+            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
+              Create custom tasks, set your own prices, and connect with a community that values your expertise.
             </p>
-            <div className="flex justify-center mt-8">
+
+            {/* Value proposition */}
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-10">
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-green-100 to-green-200 px-4 py-2 rounded-full">
+                <Gift className="w-5 h-5 text-green-600" />
+                <span className="text-green-800 font-semibold">5 Free Credits to Start</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 rounded-full">
+                <Zap className="w-5 h-5 text-blue-600" />
+                <span className="text-blue-800 font-semibold">Set Your Own Prices</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-purple-200 px-4 py-2 rounded-full">
+                <Heart className="w-5 h-5 text-purple-600" />
+                <span className="text-purple-800 font-semibold">Community Driven</span>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <button
                 onClick={handleGetStarted}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-blue-700 transition-all duration-300 flex items-center space-x-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 min-w-[280px] justify-center"
               >
                 <span>{user ? 'Go to Dashboard' : 'Start Earning Credits'}</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              </button>
+              
+              <button className="group bg-white/90 backdrop-blur-sm text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white transition-all duration-300 flex items-center space-x-3 shadow-lg hover:shadow-xl border border-gray-200 min-w-[280px] justify-center">
+                <span>Watch How It Works</span>
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[4px] border-y-transparent ml-0.5"></div>
+                </div>
               </button>
             </div>
-          </div>
 
-          {/* Hero Stats */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md">
-              <div className="text-4xl font-bold text-blue-600 mb-2">500+</div>
-              <div className="text-gray-600">Community Members</div>
+            {/* Hero Stats - Enhanced Design */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="text-4xl font-black text-blue-600 mb-2">500+</div>
+                <div className="text-gray-700 font-semibold">Active Community Members</div>
+                <div className="text-sm text-gray-500 mt-2">Growing every day</div>
+              </div>
+              
+              <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Sparkles className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="text-4xl font-black text-green-600 mb-2">∞</div>
+                <div className="text-gray-700 font-semibold">Custom Tasks Created</div>
+                <div className="text-sm text-gray-500 mt-2">Unlimited possibilities</div>
+              </div>
+              
+              <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <TrendingUp className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="text-4xl font-black text-purple-600 mb-2">2,000+</div>
+                <div className="text-gray-700 font-semibold">Credits Exchanged</div>
+                <div className="text-sm text-gray-500 mt-2">Value created together</div>
+              </div>
             </div>
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md">
-              <div className="text-4xl font-bold text-green-600 mb-2">∞</div>
-              <div className="text-gray-600">Custom Tasks Created</div>
-            </div>
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md">
-              <div className="text-4xl font-bold text-purple-600 mb-2">2,000+</div>
-              <div className="text-gray-600">Credits Exchanged</div>
+
+            {/* Social proof */}
+            <div className="mt-12 text-center">
+              <p className="text-gray-600 mb-4">Trusted by professionals from</p>
+              <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
+                <div className="text-gray-500 font-semibold">Google</div>
+                <div className="text-gray-500 font-semibold">Microsoft</div>
+                <div className="text-gray-500 font-semibold">Amazon</div>
+                <div className="text-gray-500 font-semibold">Flipkart</div>
+                <div className="text-gray-500 font-semibold">Zomato</div>
+                <div className="text-gray-500 font-semibold">Paytm</div>
+              </div>
             </div>
           </div>
         </div>
@@ -530,6 +618,15 @@ const LandingPage: React.FC = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               What Our Community Says
             </h2>
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="flex items-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <span className="text-2xl font-bold text-gray-900">{averageRating.toFixed(1)}/5</span>
+              <span className="text-gray-600">Average Rating</span>
+            </div>
             <p className="text-xl text-gray-600">
               Real feedback from TimeBank members across India
             </p>
