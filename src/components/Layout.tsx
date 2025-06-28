@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Clock, User, Home, Users, Trophy, LogOut } from 'lucide-react';
+import { Clock, User, Home, Users, Trophy, LogOut, CreditCard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface LayoutProps {
@@ -67,6 +67,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {user.timeCredits} Credits
                 </span>
               </div>
+              
+              <Link
+                to="/buy-credits"
+                className="flex items-center space-x-1 px-3 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span className="hidden sm:inline">Buy</span>
+              </Link>
               
               <button
                 onClick={logout}

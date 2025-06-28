@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
-import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight } from 'lucide-react';
+import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
-import { useSearchParams } from 'react-router-dom';
-import { taskTypes, getTaskTypeById, getAllCategories } from '../data/taskTypes';
-import TaskModal from './TaskModal';
+import { useSearchParams, Link } from 'react-router-dom';
 
 const Marketplace: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'tasks';
+  const activeTab = searchParams.get('tab') || 'browse';
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
-  const [filterRemote, setFilterRemote] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterMode, setFilterMode] = useState('all');
   
   const { user } = useAuth();
   const { offers, requests, addOffer, addRequest, createMatch } = useData();
@@ -23,101 +18,43 @@ const Marketplace: React.FC = () => {
   // Form states
   const [offerForm, setOfferForm] = useState({
     taskType: '',
-    customTask: '',
     description: '',
-    credits: 0,
-    isRemote: false,
+    credits: 1,
+    mode: 'online' as 'online' | 'offline' | 'both',
+    location: '',
   });
 
   const [requestForm, setRequestForm] = useState({
     taskType: '',
-    customTask: '',
     description: '',
-    credits: 0,
-    isRemote: false,
+    credits: 1,
+    mode: 'online' as 'online' | 'offline' | 'both',
+    location: '',
   });
 
   const setActiveTab = (tab: string) => {
     setSearchParams({ tab });
   };
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setSelectedTask(null);
-  };
-
-  const handleRequestHelp = () => {
-    if (selectedTask) {
-      setRequestForm(prev => ({
-        ...prev,
-        taskType: selectedTask.id,
-        credits: selectedTask.credits
-      }));
-      setActiveTab('request');
-      handleModalClose();
-    }
-  };
-
-  const handleOfferHelp = () => {
-    if (selectedTask) {
-      setOfferForm(prev => ({
-        ...prev,
-        taskType: selectedTask.id,
-        credits: selectedTask.credits
-      }));
-      setActiveTab('offer');
-      handleModalClose();
-    }
-  };
-
-  const handleTaskTypeChange = (taskTypeId: string, isOffer: boolean) => {
-    const taskType = getTaskTypeById(taskTypeId);
-    const credits = taskType ? taskType.credits : 0;
-    
-    if (isOffer) {
-      setOfferForm(prev => ({
-        ...prev,
-        taskType: taskTypeId,
-        credits,
-        customTask: taskTypeId === 'custom' ? prev.customTask : ''
-      }));
-    } else {
-      setRequestForm(prev => ({
-        ...prev,
-        taskType: taskTypeId,
-        credits,
-        customTask: taskTypeId === 'custom' ? prev.customTask : ''
-      }));
-    }
-  };
-
   const handleOfferSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    const taskType = getTaskTypeById(offerForm.taskType);
-    const finalTaskName = offerForm.taskType === 'custom' ? offerForm.customTask : (taskType?.name || '');
-
     addOffer({
       ...offerForm,
-      taskType: finalTaskName,
       userId: user.id,
       userName: user.name,
       userCity: user.city || 'Location not set',
       status: 'active',
+      isRemote: offerForm.mode === 'online' || offerForm.mode === 'both',
     });
 
     setOfferForm({
       taskType: '',
-      customTask: '',
       description: '',
-      credits: 0,
-      isRemote: false,
+      credits: 1,
+      mode: 'online',
+      location: '',
     });
 
     alert('Offer posted successfully!');
@@ -127,24 +64,26 @@ const Marketplace: React.FC = () => {
     e.preventDefault();
     if (!user) return;
 
-    const taskType = getTaskTypeById(requestForm.taskType);
-    const finalTaskName = requestForm.taskType === 'custom' ? requestForm.customTask : (taskType?.name || '');
+    if (user.timeCredits < requestForm.credits) {
+      alert('Insufficient credits! Please buy more credits to post this request.');
+      return;
+    }
 
     addRequest({
       ...requestForm,
-      taskType: finalTaskName,
       userId: user.id,
       userName: user.name,
       userCity: user.city || 'Location not set',
       status: 'active',
+      isRemote: requestForm.mode === 'online' || requestForm.mode === 'both',
     });
 
     setRequestForm({
       taskType: '',
-      customTask: '',
       description: '',
-      credits: 0,
-      isRemote: false,
+      credits: 1,
+      mode: 'online',
+      location: '',
     });
 
     alert('Request posted successfully!');
@@ -155,9 +94,11 @@ const Marketplace: React.FC = () => {
     
     if (type === 'offer') {
       const offer = offers.find(o => o.id === itemId);
-      if (offer) {
+      if (offer && user.timeCredits >= offer.credits) {
         createMatch('', itemId, user.id, otherUserId);
         alert('Connection request sent!');
+      } else {
+        alert('Insufficient credits! Please buy more credits.');
       }
     } else {
       const request = requests.find(r => r.id === itemId);
@@ -175,16 +116,13 @@ const Marketplace: React.FC = () => {
     const matchesSearch = offer.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          offer.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = !filterLocation || 
-                           offer.userCity.toLowerCase().includes(filterLocation.toLowerCase());
-    const matchesRemote = filterRemote === 'all' || 
-                         (filterRemote === 'remote' && offer.isRemote) ||
-                         (filterRemote === 'local' && !offer.isRemote);
+                           offer.userCity.toLowerCase().includes(filterLocation.toLowerCase()) ||
+                           offer.location?.toLowerCase().includes(filterLocation.toLowerCase());
+    const matchesMode = filterMode === 'all' || 
+                       (filterMode === 'online' && (offer.mode === 'online' || offer.mode === 'both')) ||
+                       (filterMode === 'offline' && (offer.mode === 'offline' || offer.mode === 'both'));
     
-    const taskType = taskTypes.find(t => t.name === offer.taskType);
-    const matchesCategory = filterCategory === 'all' || 
-                           (taskType && taskType.category === filterCategory);
-    
-    return matchesSearch && matchesLocation && matchesRemote && matchesCategory;
+    return matchesSearch && matchesLocation && matchesMode;
   });
 
   const filteredRequests = requests.filter(request => {
@@ -193,46 +131,45 @@ const Marketplace: React.FC = () => {
     const matchesSearch = request.taskType.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          request.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = !filterLocation || 
-                           request.userCity.toLowerCase().includes(filterLocation.toLowerCase());
-    const matchesRemote = filterRemote === 'all' || 
-                         (filterRemote === 'remote' && request.isRemote) ||
-                         (filterRemote === 'local' && !request.isRemote);
+                           request.userCity.toLowerCase().includes(filterLocation.toLowerCase()) ||
+                           request.location?.toLowerCase().includes(filterLocation.toLowerCase());
+    const matchesMode = filterMode === 'all' || 
+                       (filterMode === 'online' && (request.mode === 'online' || request.mode === 'both')) ||
+                       (filterMode === 'offline' && (request.mode === 'offline' || request.mode === 'both'));
     
-    const taskType = taskTypes.find(t => t.name === request.taskType);
-    const matchesCategory = filterCategory === 'all' || 
-                           (taskType && taskType.category === filterCategory);
-    
-    return matchesSearch && matchesLocation && matchesRemote && matchesCategory;
-  });
-
-  // Filter tasks for search
-  const filteredTasks = taskTypes.filter(task => {
-    const matchesSearch = task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || task.category === filterCategory;
-    
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesLocation && matchesMode;
   });
 
   const tabs = [
-    { id: 'tasks', name: 'Browse Tasks', count: taskTypes.length },
-    { id: 'browse', name: 'Community', count: filteredOffers.length + filteredRequests.length },
+    { id: 'browse', name: 'Browse Community', count: filteredOffers.length + filteredRequests.length },
     { id: 'offer', name: 'Offer Help', count: null },
     { id: 'request', name: 'Request Help', count: null },
   ];
-
-  const categories = getAllCategories();
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl p-8 text-white shadow-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">Skill Marketplace</h1>
-          <p className="text-blue-100 text-lg">
-            Connect with your community through task-based time exchange
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Skill Marketplace</h1>
+            <p className="text-blue-100 text-lg">
+              Connect with your community through custom task exchange
+            </p>
+          </div>
+          <div className="mt-4 md:mt-0 flex items-center space-x-4">
+            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-md rounded-xl px-4 py-2">
+              <Clock className="w-5 h-5" />
+              <span className="font-semibold">{user?.timeCredits || 0} Credits</span>
+            </div>
+            <Link
+              to="/buy-credits"
+              className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>Buy Credits</span>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -260,138 +197,12 @@ const Marketplace: React.FC = () => {
         ))}
       </div>
 
-      {/* Task Types Tab - Make this the default */}
-      {activeTab === 'tasks' && (
-        <div className="space-y-6">
-          {/* Search and Filter */}
-          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search tasks..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                />
-              </div>
-              
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-colors"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Available Task Types</h2>
-              <p className="text-gray-600">Click on any task to see detailed information and get started</p>
-            </div>
-            
-            {categories.map(category => {
-              const categoryTasks = filteredTasks.filter(task => task.category === category);
-              
-              if (categoryTasks.length === 0) return null;
-              
-              return (
-                <div key={category} className="mb-10">
-                  <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                    <Award className="w-6 h-6 mr-3 text-blue-600" />
-                    {category}
-                    <span className="ml-3 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                      {categoryTasks.length} tasks
-                    </span>
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {categoryTasks.map(task => (
-                      <div 
-                        key={task.id} 
-                        onClick={() => handleTaskClick(task)}
-                        className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer group"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                              <span className="text-2xl">{task.icon}</span>
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">{task.name}</h4>
-                              <p className="text-sm text-gray-500">{task.category}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md">
-                            <Star className="w-4 h-4" />
-                            <span>{task.credits}</span>
-                          </div>
-                        </div>
-                        <p className="text-gray-600 text-sm mb-4 leading-relaxed">{task.description}</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center text-xs text-gray-500">
-                            <Clock className="w-4 h-4 mr-1" />
-                            {task.estimatedTime}
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-semibold text-blue-600 group-hover:text-purple-600 transition-colors">
-                              Click for details →
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* No Results */}
-            {filteredTasks.length === 0 && (
-              <div className="text-center py-16">
-                <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No tasks found</h3>
-                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
-              </div>
-            )}
-
-            <div className="text-center mt-8 pt-8 border-t border-gray-200">
-              <p className="text-gray-600 mb-4">Ready to start earning or spending credits?</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => setActiveTab('offer')}
-                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 hover:scale-105"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Offer Help</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('request')}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 flex items-center justify-center space-x-2 hover:scale-105"
-                >
-                  <Star className="w-4 h-4" />
-                  <span>Request Help</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Browse Tab */}
       {activeTab === 'browse' && (
         <div className="space-y-6">
           {/* Filters */}
           <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -417,27 +228,13 @@ const Marketplace: React.FC = () => {
               <div className="relative">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
+                  value={filterMode}
+                  onChange={(e) => setFilterMode(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
                 >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="relative">
-                <Wifi className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <select
-                  value={filterRemote}
-                  onChange={(e) => setFilterRemote(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                >
-                  <option value="all">All Types</option>
-                  <option value="remote">Remote Only</option>
-                  <option value="local">Local Only</option>
+                  <option value="all">All Modes</option>
+                  <option value="online">Online Only</option>
+                  <option value="offline">Offline Only</option>
                 </select>
               </div>
             </div>
@@ -458,51 +255,50 @@ const Marketplace: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredOffers.map((offer) => {
-                    const taskType = taskTypes.find(t => t.name === offer.taskType);
-                    return (
-                      <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center space-x-2">
-                            {taskType && <span className="text-xl">{taskType.icon}</span>}
-                            <h3 className="font-semibold text-gray-900">{offer.taskType}</h3>
-                          </div>
-                          <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
-                            <Star className="w-3 h-3" />
-                            <span>{offer.credits} credits</span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-gray-600 text-sm mb-3">{offer.description}</p>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <span className="flex items-center">
-                              <MapPin className="w-4 h-4 mr-1" />
-                              {offer.userCity}
-                            </span>
-                            {offer.isRemote && (
-                              <span className="flex items-center text-green-600">
-                                <Wifi className="w-4 h-4 mr-1" />
-                                Remote
-                              </span>
-                            )}
-                          </div>
-                          
-                          <button
-                            onClick={() => handleConnect('offer', offer.id, offer.userId)}
-                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105"
-                          >
-                            Request Help
-                          </button>
-                        </div>
-                        
-                        <div className="mt-2 text-xs text-gray-400">
-                          by {offer.userName}
+                  {filteredOffers.map((offer) => (
+                    <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-semibold text-gray-900">{offer.taskType}</h3>
+                        <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
+                          <Star className="w-3 h-3" />
+                          <span>{offer.credits} credits</span>
                         </div>
                       </div>
-                    );
-                  })}
+                      
+                      <p className="text-gray-600 text-sm mb-3">{offer.description}</p>
+                      
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <span className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {offer.location || offer.userCity}
+                          </span>
+                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            offer.mode === 'online' ? 'bg-green-100 text-green-700' :
+                            offer.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                            'bg-purple-100 text-purple-700'
+                          }`}>
+                            {offer.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                            {offer.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                            {offer.mode}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-400">
+                          by {offer.userName}
+                        </div>
+                        <button
+                          onClick={() => handleConnect('offer', offer.id, offer.userId)}
+                          disabled={!user || user.timeCredits < offer.credits}
+                          className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {!user || user.timeCredits < offer.credits ? 'Insufficient Credits' : 'Request Help'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -523,51 +319,49 @@ const Marketplace: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredRequests.map((request) => {
-                    const taskType = taskTypes.find(t => t.name === request.taskType);
-                    return (
-                      <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center space-x-2">
-                            {taskType && <span className="text-xl">{taskType.icon}</span>}
-                            <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
-                          </div>
-                          <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium">
-                            <Star className="w-3 h-3" />
-                            <span>{request.credits} credits</span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-gray-600 text-sm mb-3">{request.description}</p>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <span className="flex items-center">
-                              <MapPin className="w-4 h-4 mr-1" />
-                              {request.userCity}
-                            </span>
-                            {request.isRemote && (
-                              <span className="flex items-center text-green-600">
-                                <Wifi className="w-4 h-4 mr-1" />
-                                Remote
-                              </span>
-                            )}
-                          </div>
-                          
-                          <button
-                            onClick={() => handleConnect('request', request.id, request.userId)}
-                            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
-                          >
-                            Offer Help
-                          </button>
-                        </div>
-                        
-                        <div className="mt-2 text-xs text-gray-400">
-                          by {request.userName}
+                  {filteredRequests.map((request) => (
+                    <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                        <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium">
+                          <Star className="w-3 h-3" />
+                          <span>{request.credits} credits</span>
                         </div>
                       </div>
-                    );
-                  })}
+                      
+                      <p className="text-gray-600 text-sm mb-3">{request.description}</p>
+                      
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <span className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {request.location || request.userCity}
+                          </span>
+                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            request.mode === 'online' ? 'bg-green-100 text-green-700' :
+                            request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                            'bg-purple-100 text-purple-700'
+                          }`}>
+                            {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                            {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                            {request.mode}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-400">
+                          by {request.userName}
+                        </div>
+                        <button
+                          onClick={() => handleConnect('request', request.id, request.userId)}
+                          className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
+                        >
+                          Offer Help
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -583,70 +377,66 @@ const Marketplace: React.FC = () => {
           <form onSubmit={handleOfferSubmit} className="space-y-6">
             <div>
               <label htmlFor="offer-task-type" className="block text-sm font-medium text-gray-700 mb-2">
-                Task Type
+                What can you help with?
+              </label>
+              <input
+                id="offer-task-type"
+                type="text"
+                value={offerForm.taskType}
+                onChange={(e) => setOfferForm(prev => ({ ...prev, taskType: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="e.g., Web Development, Graphic Design, Math Tutoring"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="offer-credits" className="block text-sm font-medium text-gray-700 mb-2">
+                Credits to Earn
+              </label>
+              <input
+                id="offer-credits"
+                type="number"
+                min="1"
+                max="50"
+                value={offerForm.credits}
+                onChange={(e) => setOfferForm(prev => ({ ...prev, credits: parseInt(e.target.value) }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="offer-mode" className="block text-sm font-medium text-gray-700 mb-2">
+                Task Mode
               </label>
               <select
-                id="offer-task-type"
-                value={offerForm.taskType}
-                onChange={(e) => handleTaskTypeChange(e.target.value, true)}
+                id="offer-mode"
+                value={offerForm.mode}
+                onChange={(e) => setOfferForm(prev => ({ ...prev, mode: e.target.value as 'online' | 'offline' | 'both' }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               >
-                <option value="">Select a task type</option>
-                {categories.map(category => (
-                  <optgroup key={category} label={category}>
-                    {taskTypes.filter(task => task.category === category).map(task => (
-                      <option key={task.id} value={task.id}>
-                        {task.icon} {task.name} ({task.credits} credits)
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-                <option value="custom">🔧 Custom Task</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="both">Both</option>
               </select>
             </div>
 
-            {offerForm.taskType === 'custom' && (
+            {(offerForm.mode === 'offline' || offerForm.mode === 'both') && (
               <div>
-                <label htmlFor="offer-custom-task" className="block text-sm font-medium text-gray-700 mb-2">
-                  Custom Task Name
+                <label htmlFor="offer-location" className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
                 </label>
                 <input
-                  id="offer-custom-task"
+                  id="offer-location"
                   type="text"
-                  value={offerForm.customTask}
-                  onChange={(e) => setOfferForm(prev => ({ ...prev, customTask: e.target.value }))}
+                  value={offerForm.location}
+                  onChange={(e) => setOfferForm(prev => ({ ...prev, location: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter custom task name"
-                  required
+                  placeholder="Enter your location"
+                  required={offerForm.mode === 'offline'}
                 />
-              </div>
-            )}
-
-            {offerForm.taskType === 'custom' && (
-              <div>
-                <label htmlFor="offer-credits" className="block text-sm font-medium text-gray-700 mb-2">
-                  Credits to Earn
-                </label>
-                <input
-                  id="offer-credits"
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={offerForm.credits}
-                  onChange={(e) => setOfferForm(prev => ({ ...prev, credits: parseInt(e.target.value) }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-            )}
-
-            {offerForm.taskType && offerForm.taskType !== 'custom' && (
-              <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center space-x-2 text-blue-700">
-                  <Star className="w-5 h-5" />
-                  <span className="font-medium">You will earn {offerForm.credits} credits for this task</span>
-                </div>
               </div>
             )}
 
@@ -665,19 +455,6 @@ const Marketplace: React.FC = () => {
               />
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="offer-remote"
-                type="checkbox"
-                checked={offerForm.isRemote}
-                onChange={(e) => setOfferForm(prev => ({ ...prev, isRemote: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="offer-remote" className="ml-2 text-sm text-gray-700">
-                Available for remote help
-              </label>
-            </div>
-
             <button
               type="submit"
               disabled={!offerForm.taskType}
@@ -692,75 +469,80 @@ const Marketplace: React.FC = () => {
       {/* Request Help Tab */}
       {activeTab === 'request' && (
         <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Request Help</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Request Help</h2>
+            {user && user.timeCredits < requestForm.credits && (
+              <div className="flex items-center space-x-2 text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">
+                <AlertCircle className="w-4 h-4" />
+                <span className="text-sm">Insufficient credits</span>
+                <Link to="/buy-credits" className="text-orange-700 underline text-sm">Buy more</Link>
+              </div>
+            )}
+          </div>
           
           <form onSubmit={handleRequestSubmit} className="space-y-6">
             <div>
               <label htmlFor="request-task-type" className="block text-sm font-medium text-gray-700 mb-2">
-                Task Type
+                What do you need help with?
+              </label>
+              <input
+                id="request-task-type"
+                type="text"
+                value={requestForm.taskType}
+                onChange={(e) => setRequestForm(prev => ({ ...prev, taskType: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="e.g., Website Bug Fix, Logo Design, Resume Review"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="request-credits" className="block text-sm font-medium text-gray-700 mb-2">
+                Credits to Pay
+              </label>
+              <input
+                id="request-credits"
+                type="number"
+                min="1"
+                max="50"
+                value={requestForm.credits}
+                onChange={(e) => setRequestForm(prev => ({ ...prev, credits: parseInt(e.target.value) }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="request-mode" className="block text-sm font-medium text-gray-700 mb-2">
+                Task Mode
               </label>
               <select
-                id="request-task-type"
-                value={requestForm.taskType}
-                onChange={(e) => handleTaskTypeChange(e.target.value, false)}
+                id="request-mode"
+                value={requestForm.mode}
+                onChange={(e) => setRequestForm(prev => ({ ...prev, mode: e.target.value as 'online' | 'offline' | 'both' }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               >
-                <option value="">Select a task type</option>
-                {categories.map(category => (
-                  <optgroup key={category} label={category}>
-                    {taskTypes.filter(task => task.category === category).map(task => (
-                      <option key={task.id} value={task.id}>
-                        {task.icon} {task.name} ({task.credits} credits)
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-                <option value="custom">🔧 Custom Task</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="both">Both</option>
               </select>
             </div>
 
-            {requestForm.taskType === 'custom' && (
+            {(requestForm.mode === 'offline' || requestForm.mode === 'both') && (
               <div>
-                <label htmlFor="request-custom-task" className="block text-sm font-medium text-gray-700 mb-2">
-                  Custom Task Name
+                <label htmlFor="request-location" className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
                 </label>
                 <input
-                  id="request-custom-task"
+                  id="request-location"
                   type="text"
-                  value={requestForm.customTask}
-                  onChange={(e) => setRequestForm(prev => ({ ...prev, customTask: e.target.value }))}
+                  value={requestForm.location}
+                  onChange={(e) => setRequestForm(prev => ({ ...prev, location: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter custom task name"
-                  required
+                  placeholder="Enter your location"
+                  required={requestForm.mode === 'offline'}
                 />
-              </div>
-            )}
-
-            {requestForm.taskType === 'custom' && (
-              <div>
-                <label htmlFor="request-credits" className="block text-sm font-medium text-gray-700 mb-2">
-                  Credits to Pay
-                </label>
-                <input
-                  id="request-credits"
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={requestForm.credits}
-                  onChange={(e) => setRequestForm(prev => ({ ...prev, credits: parseInt(e.target.value) }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-            )}
-
-            {requestForm.taskType && requestForm.taskType !== 'custom' && (
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
-                <div className="flex items-center space-x-2 text-purple-700">
-                  <Star className="w-5 h-5" />
-                  <span className="font-medium">This will cost {requestForm.credits} credits</span>
-                </div>
               </div>
             )}
 
@@ -779,39 +561,15 @@ const Marketplace: React.FC = () => {
               />
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="request-remote"
-                type="checkbox"
-                checked={requestForm.isRemote}
-                onChange={(e) => setRequestForm(prev => ({ ...prev, isRemote: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="request-remote" className="ml-2 text-sm text-gray-700">
-                Open to remote help
-              </label>
-            </div>
-
             <button
               type="submit"
-              disabled={!requestForm.taskType}
+              disabled={!requestForm.taskType || (user && user.timeCredits < requestForm.credits)}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
             >
-              Post Request
+              {user && user.timeCredits < requestForm.credits ? 'Insufficient Credits' : 'Post Request'}
             </button>
           </form>
         </div>
-      )}
-
-      {/* Task Modal */}
-      {selectedTask && (
-        <TaskModal
-          task={selectedTask}
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          onRequestHelp={handleRequestHelp}
-          onOfferHelp={handleOfferHelp}
-        />
       )}
     </div>
   );

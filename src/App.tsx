@@ -9,7 +9,7 @@ import Dashboard from './components/Dashboard';
 import Marketplace from './components/Marketplace';
 import Leaderboard from './components/Leaderboard';
 import Profile from './components/Profile';
-import PublicTasksPage from './components/PublicTasksPage';
+import BuyCredits from './components/BuyCredits';
 
 const ProtectedRoutes: React.FC = () => {
   const { user } = useAuth();
@@ -25,6 +25,7 @@ const ProtectedRoutes: React.FC = () => {
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/buy-credits" element={<BuyCredits />} />
         <Route path="/app" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
@@ -52,7 +53,6 @@ function App() {
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/auth" element={<AuthRoute />} />
-              <Route path="/tasks" element={<PublicTasksPage />} />
               
               {/* Protected Routes */}
               <Route path="/*" element={<ProtectedRoutes />} />

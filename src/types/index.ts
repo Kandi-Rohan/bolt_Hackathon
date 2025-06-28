@@ -34,6 +34,8 @@ export interface Offer {
   customTask?: string;
   description: string;
   credits: number;
+  mode: 'online' | 'offline' | 'both';
+  location?: string;
   isRemote: boolean;
   createdAt: string;
   status: 'active' | 'in_progress' | 'completed';
@@ -48,6 +50,8 @@ export interface Request {
   customTask?: string;
   description: string;
   credits: number;
+  mode: 'online' | 'offline' | 'both';
+  location?: string;
   isRemote: boolean;
   createdAt: string;
   status: 'active' | 'matched' | 'completed';

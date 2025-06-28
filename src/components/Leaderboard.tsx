@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Trophy, Award, Star, Clock, TrendingUp, Crown, Medal, Zap } from 'lucide-react';
+import { Trophy, Award, Star, Clock, TrendingUp, Crown, Medal, Zap, Users, Circle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Leaderboard: React.FC = () => {
@@ -10,6 +10,16 @@ const Leaderboard: React.FC = () => {
     const users = JSON.parse(localStorage.getItem('timebank_users') || '[]');
     return users.sort((a: any, b: any) => b.totalTimeGiven - a.totalTimeGiven);
   }, []);
+
+  // Simulate online users (in a real app, this would come from a real-time system)
+  const onlineUsers = useMemo(() => {
+    return allUsers.slice(0, Math.min(8, allUsers.length)).map((user: any) => ({
+      ...user,
+      isOnline: Math.random() > 0.3, // 70% chance of being online
+      lastActive: new Date(Date.now() - Math.random() * 3600000).toISOString(), // Random time within last hour
+      recentCategories: ['Programming', 'Design', 'Writing', 'Education', 'Career'].slice(0, Math.floor(Math.random() * 3) + 1)
+    }));
+  }, [allUsers]);
 
   const getBadgeInfo = (rank: number, timeGiven: number) => {
     if (rank === 1) {
@@ -117,6 +127,82 @@ const Leaderboard: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Online Users Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <Users className="w-6 h-6 mr-2 text-green-600" />
+              Community Members Online
+            </h2>
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Circle className="w-3 h-3 text-green-500 fill-current" />
+              <span>{onlineUsers.filter(u => u.isOnline).length} online now</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {onlineUsers.length === 0 ? (
+            <div className="text-center py-8">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No members online</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {onlineUsers.map((member) => (
+                <div key={member.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-semibold text-sm">
+                            {member.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        {member.isOnline && (
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                        <p className="text-xs text-gray-500">
+                          {member.isOnline ? 'Online now' : `Last seen ${new Date(member.lastActive).toLocaleTimeString()}`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-blue-600">{member.timeCredits}</div>
+                      <div className="text-xs text-gray-500">credits</div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-3">
+                    <div className="text-sm text-gray-600 mb-1">Recent categories:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {member.recentCategories.map((category: string, index: number) => (
+                        <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{member.totalTimeGiven} hours given</span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      member.isOnline ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {member.isOnline ? 'Available' : 'Away'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Top 3 Podium */}
