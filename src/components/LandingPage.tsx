@@ -20,8 +20,8 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Clock,
-      title: 'Task-Based Credits',
-      description: 'Earn credits based on task complexity and skill level. Each task has its own credit value.',
+      title: 'Credit-Based Exchange',
+      description: 'Buy credits and use them to request help. Earn credits by offering your skills to others.',
       color: 'blue',
     },
     {
@@ -32,54 +32,54 @@ const LandingPage: React.FC = () => {
     },
     {
       icon: Award,
-      title: 'Skill Recognition',
-      description: 'Build your reputation and earn badges as you help others in your community.',
+      title: 'Custom Tasks',
+      description: 'Create any task you want - from coding help to design work, tutoring to consulting.',
       color: 'purple',
     },
   ];
 
   const benefits = [
     'Start with 5 free time credits',
-    'Task-based credit system',
+    'Create custom tasks with your own pricing',
+    'Choose online or offline collaboration',
     'Build valuable community connections',
     'Learn new skills from experts',
-    'Flexible remote and local options',
-    'Gamified experience with rewards',
+    'Flexible and fair credit system',
   ];
 
   const testimonials = [
     {
       name: 'Riya Kapoor',
       role: 'Final Year CSE Student, VIT Vellore',
-      content: 'The task-based credit system makes learning feel more meaningful and fair.',
+      content: 'The custom task system lets me get exactly the help I need for my projects.',
       rating: 5,
       initials: 'RK',
     },
     {
       name: 'Rohit Patil',
       role: 'Web Developer, Pune',
-      content: 'I earned 8 credits building a website and used them for interview prep. Perfect exchange!',
+      content: 'I earned credits building websites and used them for interview prep. Perfect exchange!',
       rating: 5,
       initials: 'RP',
     },
     {
       name: 'Ananya Roy',
       role: 'Freelance Designer, Kolkata',
-      content: 'Offered logo design for 5 credits and got math tutoring in return. Love this system!',
+      content: 'Love how I can set my own prices and work both online and offline.',
       rating: 5,
       initials: 'AR',
     },
     {
       name: 'Sneha Nair',
       role: 'NGO Volunteer, Kochi',
-      content: 'Helped with assignments and received language practice. Fair credit values for everyone.',
+      content: 'The community is amazing - everyone helps each other grow.',
       rating: 5,
       initials: 'SN',
     },
     {
       name: 'Aditya Joshi',
       role: 'AI/ML Enthusiast, Mumbai',
-      content: 'Got 4 credits for interview prep help and used them for coding assistance. Great platform!',
+      content: 'Got exactly the coding help I needed. The credit system is fair and transparent.',
       rating: 5,
       initials: 'AJ',
     },
@@ -107,8 +107,8 @@ const LandingPage: React.FC = () => {
               <a href="#features" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
                 Features
               </a>
-              <a href="#tasks" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-                Tasks
+              <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                How It Works
               </a>
               <a href="#testimonials" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
                 Community
@@ -175,8 +175,8 @@ const LandingPage: React.FC = () => {
               <div className="text-gray-600">Community Members</div>
             </div>
             <div className="text-center bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md">
-              <div className="text-4xl font-bold text-green-600 mb-2">15+</div>
-              <div className="text-gray-600">Task Types Available</div>
+              <div className="text-4xl font-bold text-green-600 mb-2">∞</div>
+              <div className="text-gray-600">Custom Tasks Created</div>
             </div>
             <div className="text-center bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-md">
               <div className="text-4xl font-bold text-purple-600 mb-2">2,000+</div>
@@ -194,7 +194,7 @@ const LandingPage: React.FC = () => {
               How TimeBank Works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              A fair system where skills are valued based on complexity and time investment
+              A flexible platform where you create your own tasks and set your own prices
             </p>
           </div>
 
@@ -233,9 +233,9 @@ const LandingPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { step: '1', title: 'Sign Up & Get Credits', desc: 'Join with 5 free time credits', icon: Zap },
-                { step: '2', title: 'Choose Your Tasks', desc: 'Browse 15+ task types with different credit values', icon: Users },
-                { step: '3', title: 'Exchange & Earn', desc: 'Complete tasks and earn credits based on complexity', icon: TrendingUp },
+                { step: '1', title: 'Sign Up & Buy Credits', desc: 'Join with 5 free credits, then buy more as needed', icon: Zap },
+                { step: '2', title: 'Create Custom Tasks', desc: 'Post what you can do or what you need help with', icon: Users },
+                { step: '3', title: 'Exchange & Collaborate', desc: 'Connect with community members online or offline', icon: TrendingUp },
               ].map((item, index) => {
                 const Icon = item.icon;
                 return (
@@ -258,54 +258,104 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Task Examples Section */}
-      <section id="tasks" className="py-24 bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-24 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Popular Task Types
+              What Can You Do on TimeBank?
             </h2>
             <p className="text-xl text-gray-600">
-              Each task has a fair credit value based on skill level and time required
+              Create any task you can imagine - the possibilities are endless
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { name: 'Resume Review', credits: 2, icon: '📄', category: 'Career' },
-              { name: 'Basic HTML Help', credits: 3, icon: '💻', category: 'Programming' },
-              { name: 'Logo Design', credits: 5, icon: '🎨', category: 'Design' },
-              { name: 'Math Tutoring', credits: 4, icon: '📐', category: 'Education' },
-              { name: 'Video Editing', credits: 6, icon: '🎬', category: 'Media' },
-              { name: 'Build Website', credits: 8, icon: '🌐', category: 'Programming' },
-            ].map((task, index) => (
+              {
+                category: 'Programming & Tech',
+                examples: ['Website Development', 'Bug Fixes', 'Code Reviews', 'App Development'],
+                icon: '💻',
+                color: 'from-blue-500 to-blue-600'
+              },
+              {
+                category: 'Design & Creative',
+                examples: ['Logo Design', 'UI/UX Design', 'Video Editing', 'Content Creation'],
+                icon: '🎨',
+                color: 'from-purple-500 to-purple-600'
+              },
+              {
+                category: 'Education & Tutoring',
+                examples: ['Math Tutoring', 'Language Practice', 'Exam Prep', 'Skill Training'],
+                icon: '📚',
+                color: 'from-green-500 to-green-600'
+              },
+              {
+                category: 'Business & Career',
+                examples: ['Resume Reviews', 'Interview Prep', 'Business Consulting', 'Marketing Help'],
+                icon: '💼',
+                color: 'from-orange-500 to-orange-600'
+              },
+              {
+                category: 'Writing & Content',
+                examples: ['Article Writing', 'Proofreading', 'Translation', 'Copywriting'],
+                icon: '✍️',
+                color: 'from-indigo-500 to-indigo-600'
+              },
+              {
+                category: 'Personal & Lifestyle',
+                examples: ['Fitness Coaching', 'Cooking Lessons', 'Music Lessons', 'Life Coaching'],
+                icon: '🌟',
+                color: 'from-pink-500 to-pink-600'
+              }
+            ].map((category, index) => (
               <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <span className="text-2xl">{task.icon}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{task.name}</h3>
-                      <p className="text-sm text-gray-500">{task.category}</p>
-                    </div>
+                <div className="flex items-center mb-4">
+                  <div className={`w-12 h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center mr-4`}>
+                    <span className="text-2xl">{category.icon}</span>
                   </div>
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    {task.credits} credits
-                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">{category.category}</h3>
+                </div>
+                <ul className="space-y-2">
+                  {category.examples.map((example, idx) => (
+                    <li key={idx} className="text-gray-600 text-sm flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      {example}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 text-xs text-gray-500 italic">
+                  ...and many more custom tasks!
                 </div>
               </div>
             ))}
           </div>
 
           <div className="text-center mt-12">
-            <Link
-              to="/tasks"
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-            >
-              <span>View All Tasks</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-blue-100 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Your Task, Your Price, Your Way</h3>
+              <p className="text-gray-600 mb-6">
+                Unlike other platforms, TimeBank gives you complete freedom to create any task you want and set your own credit value. 
+                Whether you need help with something specific or want to offer your unique skills, you're in control.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="p-4">
+                  <div className="text-3xl mb-2">🎯</div>
+                  <h4 className="font-semibold text-gray-900">Custom Tasks</h4>
+                  <p className="text-sm text-gray-600">Create exactly what you need</p>
+                </div>
+                <div className="p-4">
+                  <div className="text-3xl mb-2">💰</div>
+                  <h4 className="font-semibold text-gray-900">Your Pricing</h4>
+                  <p className="text-sm text-gray-600">Set credits based on complexity</p>
+                </div>
+                <div className="p-4">
+                  <div className="text-3xl mb-2">🌐</div>
+                  <h4 className="font-semibold text-gray-900">Online/Offline</h4>
+                  <p className="text-sm text-gray-600">Choose how you want to work</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -346,7 +396,7 @@ const LandingPage: React.FC = () => {
                 <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">5</div>
                 <div className="text-gray-600 font-medium">Starting Credits</div>
                 <div className="mt-4 text-sm text-gray-500">
-                  Earn more by helping others!
+                  Buy more as you need them!
                 </div>
               </div>
               
@@ -408,7 +458,7 @@ const LandingPage: React.FC = () => {
             Ready to Join the TimeBank Community?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Start sharing your skills and earning credits today. It's free to join!
+            Start creating custom tasks and connecting with skilled community members today!
           </p>
           <button
             onClick={handleGetStarted}
@@ -432,7 +482,7 @@ const LandingPage: React.FC = () => {
                 <span className="text-xl font-bold">TimeBank</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                Building stronger communities through skill sharing and task-based time exchange. 
+                Building stronger communities through skill sharing and custom task exchange. 
                 Where everyone's expertise is valued fairly.
               </p>
               <div className="text-gray-500 text-sm">
@@ -444,7 +494,7 @@ const LandingPage: React.FC = () => {
               <h3 className="font-semibold mb-4">Platform</h3>
               <ul className="space-y-3 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">How it Works</a></li>
-                <li><Link to="/tasks" className="hover:text-white transition-colors">Task Types</Link></li>
+                <li><a href="#how-it-works" className="hover:text-white transition-colors">Create Tasks</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Community Guidelines</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
               </ul>
