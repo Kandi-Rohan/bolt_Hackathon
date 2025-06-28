@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Plus, TrendingUp, Users, Award, ArrowRight, Star, Zap, BookOpen, Shield, Megaphone, Gift, Video, FileText, Trophy, Sparkles, CreditCard, Eye, Edit } from 'lucide-react';
+import { Clock, Plus, TrendingUp, Users, Award, ArrowRight, Star, Zap, BookOpen, Shield, Megaphone, Gift, Video, FileText, Trophy, Sparkles, CreditCard, Eye, Edit, User, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: 'Join Premium Events',
-      description: 'Access exclusive webinars and skill-building workshops',
+      description: 'Access exclusive webin ars and skill-building workshops',
       icon: Trophy,
       credits: '5-15 credits',
       color: 'from-orange-500 to-orange-600',
@@ -175,6 +175,66 @@ const Dashboard: React.FC = () => {
       taskIcon: '⭐',
       taskCategory: 'Community'
     }));
+
+  // Empty state illustration
+  const EmptyStateIllustration = ({ type }: { type: 'offers' | 'requests' | 'activity' }) => (
+    <div className="text-center py-8">
+      <svg
+        viewBox="0 0 200 150"
+        className="w-24 h-18 mx-auto mb-4 opacity-60"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {type === 'offers' && (
+          <>
+            <circle cx="100" cy="75" r="40" fill="url(#emptyGradient1)" opacity="0.2" />
+            <path d="M80 65 Q100 45 120 65 Q100 85 80 65" fill="url(#emptyGradient1)" opacity="0.4" />
+            <circle cx="90" cy="70" r="3" fill="white" />
+            <circle cx="110" cy="70" r="3" fill="white" />
+            <path d="M85 80 Q100 90 115 80" stroke="white" strokeWidth="2" fill="none" />
+          </>
+        )}
+        {type === 'requests' && (
+          <>
+            <rect x="60" y="40" width="80" height="60" rx="10" fill="url(#emptyGradient2)" opacity="0.3" />
+            <circle cx="100" cy="70" r="15" fill="url(#emptyGradient2)" opacity="0.6" />
+            <path d="M95 65 L105 75 M105 65 L95 75" stroke="white" strokeWidth="2" />
+          </>
+        )}
+        {type === 'activity' && (
+          <>
+            <circle cx="100" cy="75" r="35" fill="url(#emptyGradient3)" opacity="0.3" />
+            <rect x="85" y="60" width="30" height="30" rx="5" fill="url(#emptyGradient3)" opacity="0.5" />
+            <circle cx="100" cy="75" r="8" fill="white" />
+          </>
+        )}
+        <defs>
+          <linearGradient id="emptyGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3B82F6" />
+            <stop offset="100%" stopColor="#8B5CF6" />
+          </linearGradient>
+          <linearGradient id="emptyGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="100%" stopColor="#3B82F6" />
+          </linearGradient>
+          <linearGradient id="emptyGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#EF4444" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <p className="text-gray-500 font-medium">
+        {type === 'offers' && 'No offers posted yet'}
+        {type === 'requests' && 'No requests posted yet'}
+        {type === 'activity' && 'No recent transactions'}
+      </p>
+      <p className="text-gray-400 text-sm mt-1">
+        {type === 'offers' && 'Share your skills with the community'}
+        {type === 'requests' && 'Ask for help from the community'}
+        {type === 'activity' && 'Start helping others to see your activity here'}
+      </p>
+    </div>
+  );
 
   return (
     <div className="space-y-8">
@@ -269,11 +329,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="p-6">
             {userOffers.length === 0 ? (
-              <div className="text-center py-8">
-                <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No offers posted yet</p>
-                <p className="text-gray-400 text-sm mt-1">Share your skills with the community</p>
-              </div>
+              <EmptyStateIllustration type="offers" />
             ) : (
               <div className="space-y-4">
                 {userOffers.slice(0, 3).map((offer) => (
@@ -336,11 +392,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="p-6">
             {userRequests.length === 0 ? (
-              <div className="text-center py-8">
-                <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No requests posted yet</p>
-                <p className="text-gray-400 text-sm mt-1">Ask for help from the community</p>
-              </div>
+              <EmptyStateIllustration type="requests" />
             ) : (
               <div className="space-y-4">
                 {userRequests.slice(0, 3).map((request) => (
@@ -474,11 +526,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="p-6">
           {popularTasks.length === 0 ? (
-            <div className="text-center py-8">
-              <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No recent transactions</p>
-              <p className="text-gray-400 text-sm mt-1">Start helping others to see your activity here</p>
-            </div>
+            <EmptyStateIllustration type="activity" />
           ) : (
             <div className="space-y-4">
               {popularTasks.map((transaction) => (

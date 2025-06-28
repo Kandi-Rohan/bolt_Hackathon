@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle, User, MessageCircle } from 'lucide-react';
+import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle, User, MessageCircle, Code, Palette, BookOpen, Briefcase, PenTool, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -31,6 +31,91 @@ const Marketplace: React.FC = () => {
     mode: 'online' as 'online' | 'offline' | 'both',
     location: '',
   });
+
+  // Task category icons mapping
+  const getTaskIcon = (taskType: string) => {
+    const type = taskType.toLowerCase();
+    if (type.includes('code') || type.includes('programming') || type.includes('development') || type.includes('web') || type.includes('app')) {
+      return { icon: Code, color: 'from-blue-500 to-blue-600', bg: 'bg-blue-100', text: 'text-blue-700' };
+    }
+    if (type.includes('design') || type.includes('logo') || type.includes('ui') || type.includes('ux') || type.includes('graphic')) {
+      return { icon: Palette, color: 'from-purple-500 to-purple-600', bg: 'bg-purple-100', text: 'text-purple-700' };
+    }
+    if (type.includes('tutor') || type.includes('teach') || type.includes('education') || type.includes('learn') || type.includes('math') || type.includes('language')) {
+      return { icon: BookOpen, color: 'from-green-500 to-green-600', bg: 'bg-green-100', text: 'text-green-700' };
+    }
+    if (type.includes('business') || type.includes('consulting') || type.includes('marketing') || type.includes('career') || type.includes('resume')) {
+      return { icon: Briefcase, color: 'from-orange-500 to-orange-600', bg: 'bg-orange-100', text: 'text-orange-700' };
+    }
+    if (type.includes('writing') || type.includes('content') || type.includes('article') || type.includes('copy') || type.includes('translation')) {
+      return { icon: PenTool, color: 'from-indigo-500 to-indigo-600', bg: 'bg-indigo-100', text: 'text-indigo-700' };
+    }
+    if (type.includes('fitness') || type.includes('health') || type.includes('cooking') || type.includes('music') || type.includes('life')) {
+      return { icon: Heart, color: 'from-pink-500 to-pink-600', bg: 'bg-pink-100', text: 'text-pink-700' };
+    }
+    // Default icon
+    return { icon: Star, color: 'from-gray-500 to-gray-600', bg: 'bg-gray-100', text: 'text-gray-700' };
+  };
+
+  // Empty state SVG component
+  const EmptyStateIllustration = ({ type }: { type: 'offers' | 'requests' | 'tasks' }) => (
+    <div className="text-center py-12">
+      <svg
+        viewBox="0 0 200 150"
+        className="w-32 h-24 mx-auto mb-4 opacity-60"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {type === 'offers' && (
+          <>
+            <circle cx="100" cy="75" r="40" fill="url(#emptyGradient1)" opacity="0.2" />
+            <path d="M80 65 Q100 45 120 65 Q100 85 80 65" fill="url(#emptyGradient1)" opacity="0.4" />
+            <circle cx="90" cy="70" r="3" fill="white" />
+            <circle cx="110" cy="70" r="3" fill="white" />
+            <path d="M85 80 Q100 90 115 80" stroke="white" strokeWidth="2" fill="none" />
+          </>
+        )}
+        {type === 'requests' && (
+          <>
+            <rect x="60" y="40" width="80" height="60" rx="10" fill="url(#emptyGradient2)" opacity="0.3" />
+            <circle cx="100" cy="70" r="15" fill="url(#emptyGradient2)" opacity="0.6" />
+            <path d="M95 65 L105 75 M105 65 L95 75" stroke="white" strokeWidth="2" />
+          </>
+        )}
+        {type === 'tasks' && (
+          <>
+            <circle cx="100" cy="75" r="35" fill="url(#emptyGradient3)" opacity="0.3" />
+            <rect x="85" y="60" width="30" height="30" rx="5" fill="url(#emptyGradient3)" opacity="0.5" />
+            <circle cx="100" cy="75" r="8" fill="white" />
+          </>
+        )}
+        <defs>
+          <linearGradient id="emptyGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3B82F6" />
+            <stop offset="100%" stopColor="#8B5CF6" />
+          </linearGradient>
+          <linearGradient id="emptyGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="100%" stopColor="#3B82F6" />
+          </linearGradient>
+          <linearGradient id="emptyGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#EF4444" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <p className="text-gray-500 font-medium">
+        {type === 'offers' && 'No help offers available'}
+        {type === 'requests' && 'No help requests found'}
+        {type === 'tasks' && 'No accepted tasks yet'}
+      </p>
+      <p className="text-gray-400 text-sm mt-1">
+        {type === 'offers' && 'Be the first to offer your skills to the community'}
+        {type === 'requests' && 'Try adjusting your search criteria or check back later'}
+        {type === 'tasks' && 'Browse the community to find tasks you can help with'}
+      </p>
+    </div>
+  );
 
   const setActiveTab = (tab: string) => {
     setSearchParams({ tab });
@@ -217,57 +302,63 @@ const Marketplace: React.FC = () => {
             </div>
             <div className="p-6">
               {userAcceptedRequests.length === 0 ? (
-                <div className="text-center py-8">
-                  <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No accepted tasks yet</p>
-                  <p className="text-gray-400 text-sm mt-1">Browse the community to find tasks you can help with</p>
-                </div>
+                <EmptyStateIllustration type="tasks" />
               ) : (
                 <div className="space-y-4">
-                  {userAcceptedRequests.map((request) => (
-                    <div key={request.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-blue-50">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
-                          <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                            <User className="w-4 h-4" />
-                            <span>Requested by: <strong>{request.userName}</strong></span>
+                  {userAcceptedRequests.map((request) => {
+                    const taskIconData = getTaskIcon(request.taskType);
+                    const TaskIcon = taskIconData.icon;
+                    
+                    return (
+                      <div key={request.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-blue-50">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-12 h-12 bg-gradient-to-r ${taskIconData.color} rounded-xl flex items-center justify-center shadow-md`}>
+                              <TaskIcon className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                              <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
+                                <User className="w-4 h-4" />
+                                <span>Requested by: <strong>{request.userName}</strong></span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                              Accepted
+                            </span>
+                            <span className="text-green-600 font-medium text-sm">{request.credits} credits</span>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                            Accepted
-                          </span>
-                          <span className="text-green-600 font-medium text-sm">{request.credits} credits</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-600 text-sm mb-3">{request.description}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {request.location || request.userCity}
-                          </span>
-                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            request.mode === 'online' ? 'bg-green-100 text-green-700' :
-                            request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
-                            'bg-purple-100 text-purple-700'
-                          }`}>
-                            {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
-                            {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
-                            {request.mode}
-                          </span>
-                        </div>
                         
-                        <button className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                          <span>Contact</span>
-                        </button>
+                        <p className="text-gray-600 text-sm mb-3">{request.description}</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <span className="flex items-center">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {request.location || request.userCity}
+                            </span>
+                            <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              request.mode === 'online' ? 'bg-green-100 text-green-700' :
+                              request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                              'bg-purple-100 text-purple-700'
+                            }`}>
+                              {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                              {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                              {request.mode}
+                            </span>
+                          </div>
+                          
+                          <button className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Contact</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -326,57 +417,63 @@ const Marketplace: React.FC = () => {
             </div>
             <div className="p-6">
               {filteredOffers.length === 0 ? (
-                <div className="text-center py-8">
-                  <Plus className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No offers match your filters</p>
-                  <p className="text-gray-400 text-sm mt-1">Try adjusting your search criteria</p>
-                </div>
+                <EmptyStateIllustration type="offers" />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredOffers.map((offer) => (
-                    <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-semibold text-gray-900">{offer.taskType}</h3>
-                        <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
-                          <Star className="w-3 h-3" />
-                          <span>{offer.credits} credits</span>
+                  {filteredOffers.map((offer) => {
+                    const taskIconData = getTaskIcon(offer.taskType);
+                    const TaskIcon = taskIconData.icon;
+                    
+                    return (
+                      <div key={offer.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm`}>
+                              <TaskIcon className="w-5 h-5 text-white" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900">{offer.taskType}</h3>
+                          </div>
+                          <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
+                            <Star className="w-3 h-3" />
+                            <span>{offer.credits} credits</span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm mb-3">{offer.description}</p>
+                        
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <span className="flex items-center">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {offer.location || offer.userCity}
+                            </span>
+                            <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              offer.mode === 'online' ? 'bg-green-100 text-green-700' :
+                              offer.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                              'bg-purple-100 text-purple-700'
+                            }`}>
+                              {offer.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                              {offer.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                              {offer.mode}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-gray-400">
+                            by {offer.userName}
+                          </div>
+                          <button
+                            onClick={() => handleConnect('offer', offer.id, offer.userId, offer.userName, offer.taskType)}
+                            disabled={!user || user.timeCredits < offer.credits}
+                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {!user || user.timeCredits < offer.credits ? 'Insufficient Credits' : 'Request Help'}
+                          </button>
                         </div>
                       </div>
-                      
-                      <p className="text-gray-600 text-sm mb-3">{offer.description}</p>
-                      
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {offer.location || offer.userCity}
-                          </span>
-                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            offer.mode === 'online' ? 'bg-green-100 text-green-700' :
-                            offer.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
-                            'bg-purple-100 text-purple-700'
-                          }`}>
-                            {offer.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
-                            {offer.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
-                            {offer.mode}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs text-gray-400">
-                          by {offer.userName}
-                        </div>
-                        <button
-                          onClick={() => handleConnect('offer', offer.id, offer.userId, offer.userName, offer.taskType)}
-                          disabled={!user || user.timeCredits < offer.credits}
-                          className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {!user || user.timeCredits < offer.credits ? 'Insufficient Credits' : 'Request Help'}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -390,56 +487,62 @@ const Marketplace: React.FC = () => {
             </div>
             <div className="p-6">
               {filteredRequests.length === 0 ? (
-                <div className="text-center py-8">
-                  <Plus className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No requests match your filters</p>
-                  <p className="text-gray-400 text-sm mt-1">Try adjusting your search criteria</p>
-                </div>
+                <EmptyStateIllustration type="requests" />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredRequests.map((request) => (
-                    <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
-                        <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium">
-                          <Star className="w-3 h-3" />
-                          <span>{request.credits} credits</span>
+                  {filteredRequests.map((request) => {
+                    const taskIconData = getTaskIcon(request.taskType);
+                    const TaskIcon = taskIconData.icon;
+                    
+                    return (
+                      <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-105 transition-all duration-200">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-10 h-10 bg-gradient-to-r ${taskIconData.color} rounded-lg flex items-center justify-center shadow-sm`}>
+                              <TaskIcon className="w-5 h-5 text-white" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                          </div>
+                          <div className="flex items-center space-x-1 bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-sm font-medium">
+                            <Star className="w-3 h-3" />
+                            <span>{request.credits} credits</span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm mb-3">{request.description}</p>
+                        
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <span className="flex items-center">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {request.location || request.userCity}
+                            </span>
+                            <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              request.mode === 'online' ? 'bg-green-100 text-green-700' :
+                              request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                              'bg-purple-100 text-purple-700'
+                            }`}>
+                              {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                              {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                              {request.mode}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-gray-400">
+                            by {request.userName}
+                          </div>
+                          <button
+                            onClick={() => handleConnect('request', request.id, request.userId, request.userName, request.taskType)}
+                            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
+                          >
+                            Offer Help
+                          </button>
                         </div>
                       </div>
-                      
-                      <p className="text-gray-600 text-sm mb-3">{request.description}</p>
-                      
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {request.location || request.userCity}
-                          </span>
-                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            request.mode === 'online' ? 'bg-green-100 text-green-700' :
-                            request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
-                            'bg-purple-100 text-purple-700'
-                          }`}>
-                            {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
-                            {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
-                            {request.mode}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs text-gray-400">
-                          by {request.userName}
-                        </div>
-                        <button
-                          onClick={() => handleConnect('request', request.id, request.userId, request.userName, request.taskType)}
-                          className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
-                        >
-                          Offer Help
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

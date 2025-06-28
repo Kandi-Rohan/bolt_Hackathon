@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, CreditCard, Check, Star, Zap, Crown } from 'lucide-react';
+import { Clock, CreditCard, Check, Star, Zap, Crown, Gift, Sparkles, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ const BuyCredits: React.FC = () => {
       price: 49,
       credits: 10,
       popular: false,
+      icon: '💰',
       features: [
         '10 Time Credits',
         'Access to all basic tasks',
@@ -32,6 +33,7 @@ const BuyCredits: React.FC = () => {
       price: 99,
       credits: 25,
       popular: true,
+      icon: '🕒',
       features: [
         '25 Time Credits',
         'Priority task matching',
@@ -49,6 +51,7 @@ const BuyCredits: React.FC = () => {
       price: 199,
       credits: 60,
       popular: false,
+      icon: '🎁',
       features: [
         '60 Time Credits',
         'VIP support',
@@ -85,10 +88,16 @@ const BuyCredits: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 rounded-2xl p-8 text-white shadow-lg">
-        <div className="text-center">
-          <CreditCard className="w-16 h-16 mx-auto mb-4" />
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+        
+        <div className="text-center relative z-10">
+          <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <CreditCard className="w-10 h-10" />
+          </div>
           <h1 className="text-3xl font-bold mb-2">Buy Time Credits</h1>
           <p className="text-blue-100 text-lg">
             Invest in your skills and unlock the full potential of our community
@@ -111,7 +120,7 @@ const BuyCredits: React.FC = () => {
         </div>
       </div>
 
-      {/* Pricing Plans */}
+      {/* Enhanced Pricing Plans */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <div
@@ -131,10 +140,8 @@ const BuyCredits: React.FC = () => {
 
             <div className="p-8">
               <div className="text-center mb-6">
-                <div className={`w-16 h-16 bg-gradient-to-r ${plan.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                  {plan.id === 'starter' && <Zap className="w-8 h-8 text-white" />}
-                  {plan.id === 'popular' && <Star className="w-8 h-8 text-white" />}
-                  {plan.id === 'premium' && <Crown className="w-8 h-8 text-white" />}
+                <div className={`w-16 h-16 bg-gradient-to-r ${plan.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <span className="text-2xl">{plan.icon}</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
                 <div className="mt-4">
@@ -172,18 +179,40 @@ const BuyCredits: React.FC = () => {
         ))}
       </div>
 
-      {/* Why Buy Credits */}
+      {/* Enhanced Why Buy Credits Section */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-200">
         <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Why Buy Time Credits?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { icon: '🎯', title: 'Get Help Fast', desc: 'Access skilled community members instantly' },
-            { icon: '💡', title: 'Learn New Skills', desc: 'Book 1:1 sessions with experts' },
-            { icon: '🚀', title: 'Boost Your Projects', desc: 'Get professional assistance for your work' },
-            { icon: '🤝', title: 'Support Community', desc: 'Help others while getting help yourself' }
+            { 
+              icon: '🎯', 
+              title: 'Get Help Fast', 
+              desc: 'Access skilled community members instantly',
+              color: 'from-blue-500 to-blue-600'
+            },
+            { 
+              icon: '💡', 
+              title: 'Learn New Skills', 
+              desc: 'Book 1:1 sessions with experts',
+              color: 'from-green-500 to-green-600'
+            },
+            { 
+              icon: '🚀', 
+              title: 'Boost Your Projects', 
+              desc: 'Get professional assistance for your work',
+              color: 'from-purple-500 to-purple-600'
+            },
+            { 
+              icon: '🤝', 
+              title: 'Support Community', 
+              desc: 'Help others while getting help yourself',
+              color: 'from-orange-500 to-orange-600'
+            }
           ].map((item, index) => (
-            <div key={index} className="text-center">
-              <div className="text-4xl mb-3">{item.icon}</div>
+            <div key={index} className="text-center group">
+              <div className={`w-16 h-16 bg-gradient-to-r ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                <span className="text-2xl">{item.icon}</span>
+              </div>
               <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
               <p className="text-gray-600 text-sm">{item.desc}</p>
             </div>
