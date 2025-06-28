@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Clock, Mail, Lock, User, Eye, EyeOff, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface AuthFormProps {
@@ -12,6 +12,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [city, setCity] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
@@ -39,6 +40,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           return;
         }
         
+        if (city.trim().length < 2) {
+          setError('Please enter your city/location');
+          setLoading(false);
+          return;
+        }
+        
         if (password !== confirmPassword) {
           setError('Passwords do not match');
           setLoading(false);
@@ -51,7 +58,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           return;
         }
         
-        success = await signup(email, password, name);
+        success = await signup(email, password, name, city);
         if (!success) {
           setError('An account with this email already exists');
         }
@@ -100,6 +107,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                     onChange={(e) => setName(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Enter your full name"
+                    required={!isLogin}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
+                  City/Location
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    id="city"
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Enter your city"
                     required={!isLogin}
                   />
                 </div>
@@ -207,6 +234,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                   setIsLogin(!isLogin);
                   setError('');
                   setConfirmPassword('');
+                  setCity('');
                 }}
                 className="ml-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >

@@ -4,7 +4,7 @@ import { User } from '../types';
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, name: string) => Promise<boolean>;
+  signup: (email: string, password: string, name: string, city: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
 }
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return false;
   };
 
-  const signup = async (email: string, password: string, name: string): Promise<boolean> => {
+  const signup = async (email: string, password: string, name: string, city: string): Promise<boolean> => {
     // Simulate API call
     const users = JSON.parse(localStorage.getItem('timebank_users') || '[]');
     const existingUser = users.find((u: User) => u.email === email);
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       name,
       bio: '',
       skills: [],
-      city: '',
+      city,
       timeCredits: 5, // Start with 5 credits
       totalTimeGiven: 0,
       totalTimeReceived: 0,

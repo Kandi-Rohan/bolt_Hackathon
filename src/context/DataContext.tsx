@@ -11,6 +11,7 @@ interface DataContextType {
   addTransaction: (transaction: Omit<Transaction, 'id' | 'createdAt'>) => void;
   completeMatch: (matchId: string) => void;
   createMatch: (requestId: string, offerId: string, requesterId: string, helperId: string) => void;
+  acceptMatch: (matchId: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -97,6 +98,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     localStorage.setItem('timebank_matches', JSON.stringify(updatedMatches));
   };
 
+  const acceptMatch = (matchId: string) => {
+    const updatedMatches = matches.map(match =>
+      match.id === matchId ? { ...match, status: 'accepted' as const } : match
+    );
+    setMatches(updatedMatches);
+    localStorage.setItem('timebank_matches', JSON.stringify(updatedMatches));
+  };
+
   const completeMatch = (matchId: string) => {
     const updatedMatches = matches.map(match =>
       match.id === matchId ? { ...match, status: 'completed' as const } : match
@@ -116,6 +125,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       addTransaction,
       completeMatch,
       createMatch,
+      acceptMatch,
     }}>
       {children}
     </DataContext.Provider>

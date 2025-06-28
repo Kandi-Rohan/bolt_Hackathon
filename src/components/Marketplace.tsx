@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle } from 'lucide-react';
+import { Plus, Clock, MapPin, Wifi, Search, Filter, Star, Award, ArrowRight, CreditCard, AlertCircle, User, MessageCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ const Marketplace: React.FC = () => {
   const [filterMode, setFilterMode] = useState('all');
   
   const { user } = useAuth();
-  const { offers, requests, addOffer, addRequest, createMatch } = useData();
+  const { offers, requests, addOffer, addRequest, createMatch, matches } = useData();
 
   // Form states
   const [offerForm, setOfferForm] = useState({
@@ -89,14 +89,14 @@ const Marketplace: React.FC = () => {
     alert('Request posted successfully!');
   };
 
-  const handleConnect = (type: 'offer' | 'request', itemId: string, otherUserId: string) => {
+  const handleConnect = (type: 'offer' | 'request', itemId: string, otherUserId: string, otherUserName: string, taskTitle: string) => {
     if (!user) return;
     
     if (type === 'offer') {
       const offer = offers.find(o => o.id === itemId);
       if (offer && user.timeCredits >= offer.credits) {
         createMatch('', itemId, user.id, otherUserId);
-        alert('Connection request sent!');
+        alert(`Connection request sent to ${otherUserName} for "${taskTitle}"!`);
       } else {
         alert('Insufficient credits! Please buy more credits.');
       }
@@ -104,10 +104,19 @@ const Marketplace: React.FC = () => {
       const request = requests.find(r => r.id === itemId);
       if (request) {
         createMatch(itemId, '', otherUserId, user.id);
-        alert('Offer to help sent!');
+        alert(`Offer to help ${otherUserName} with "${taskTitle}" sent!`);
       }
     }
   };
+
+  // Get user's accepted requests (where they are the helper)
+  const userAcceptedRequests = matches
+    .filter(match => match.helperId === user?.id && match.status === 'accepted')
+    .map(match => {
+      const request = requests.find(r => r.id === match.requestId);
+      return request ? { ...request, matchId: match.id } : null;
+    })
+    .filter(Boolean);
 
   // Filter logic
   const filteredOffers = offers.filter(offer => {
@@ -144,6 +153,7 @@ const Marketplace: React.FC = () => {
     { id: 'browse', name: 'Browse Community', count: filteredOffers.length + filteredRequests.length },
     { id: 'offer', name: 'Offer Help', count: null },
     { id: 'request', name: 'Request Help', count: null },
+    { id: 'accepted', name: 'Accepted Tasks', count: userAcceptedRequests.length },
   ];
 
   return (
@@ -196,6 +206,74 @@ const Marketplace: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* Accepted Tasks Tab */}
+      {activeTab === 'accepted' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow-md border border-gray-100">
+            <div className="p-6 border-b border-gray-100">
+              <h2 className="text-lg font-semibold text-gray-900">Tasks You've Accepted</h2>
+              <p className="text-gray-600 text-sm mt-1">Requests you've agreed to help with</p>
+            </div>
+            <div className="p-6">
+              {userAcceptedRequests.length === 0 ? (
+                <div className="text-center py-8">
+                  <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No accepted tasks yet</p>
+                  <p className="text-gray-400 text-sm mt-1">Browse the community to find tasks you can help with</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {userAcceptedRequests.map((request) => (
+                    <div key={request.id} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-blue-50">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{request.taskType}</h3>
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
+                            <User className="w-4 h-4" />
+                            <span>Requested by: <strong>{request.userName}</strong></span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                            Accepted
+                          </span>
+                          <span className="text-green-600 font-medium text-sm">{request.credits} credits</span>
+                        </div>
+                      </div>
+                      
+                      <p className="text-gray-600 text-sm mb-3">{request.description}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <span className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {request.location || request.userCity}
+                          </span>
+                          <span className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            request.mode === 'online' ? 'bg-green-100 text-green-700' :
+                            request.mode === 'offline' ? 'bg-blue-100 text-blue-700' :
+                            'bg-purple-100 text-purple-700'
+                          }`}>
+                            {request.mode === 'online' && <Wifi className="w-3 h-3 mr-1" />}
+                            {request.mode === 'offline' && <MapPin className="w-3 h-3 mr-1" />}
+                            {request.mode}
+                          </span>
+                        </div>
+                        
+                        <button className="flex items-center space-x-1 px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
+                          <MessageCircle className="w-4 h-4" />
+                          <span>Contact</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Browse Tab */}
       {activeTab === 'browse' && (
@@ -290,7 +368,7 @@ const Marketplace: React.FC = () => {
                           by {offer.userName}
                         </div>
                         <button
-                          onClick={() => handleConnect('offer', offer.id, offer.userId)}
+                          onClick={() => handleConnect('offer', offer.id, offer.userId, offer.userName, offer.taskType)}
                           disabled={!user || user.timeCredits < offer.credits}
                           className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -354,7 +432,7 @@ const Marketplace: React.FC = () => {
                           by {request.userName}
                         </div>
                         <button
-                          onClick={() => handleConnect('request', request.id, request.userId)}
+                          onClick={() => handleConnect('request', request.id, request.userId, request.userName, request.taskType)}
                           className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors hover:scale-105"
                         >
                           Offer Help
