@@ -360,92 +360,160 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Benefits Section - Enhanced */}
+      <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-x-36 -translate-y-36 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-green-200/30 to-blue-200/30 rounded-full translate-x-48 translate-y-48 blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Why Choose TimeBank?
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-full mb-6">
+                <Heart className="w-5 h-5 text-purple-600" />
+                <span className="text-purple-700 font-medium text-sm">Community First</span>
+              </div>
+              
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Why Choose{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  TimeBank?
+                </span>
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Join a community where your skills are valued fairly and everyone benefits from knowledge sharing.
+              
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Join a thriving community where your skills are valued fairly and everyone benefits from collaborative knowledge sharing.
               </p>
+              
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-700">{benefit}</span>
+                  <div key={index} className="flex items-center space-x-4 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-200">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">{benefit}</span>
                   </div>
                 ))}
               </div>
+              
+              <div className="mt-10">
+                <button
+                  onClick={handleGetStarted}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2"
+                >
+                  <span>Join Our Community</span>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
             
-            <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-8 border border-blue-200 overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full translate-y-12 -translate-x-12"></div>
-              
-              <div className="relative z-10">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Clock className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Time Credit Wallet</h3>
-                    <p className="text-gray-600">Your community currency</p>
-                  </div>
-                </div>
+            <div className="relative">
+              {/* Main wallet card with enhanced 3D effect */}
+              <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-8 border border-blue-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+                {/* Floating decorative elements */}
+                <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full animate-bounce"></div>
+                <div className="absolute bottom-6 left-6 w-12 h-12 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full animate-pulse"></div>
+                <div className="absolute top-1/2 right-8 w-8 h-8 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-ping"></div>
                 
-                <div className="text-center py-10 bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl border border-blue-100 shadow-inner mb-6">
-                  <div className="relative">
-                    <div className="text-7xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 animate-pulse">
-                      5
+                <div className="relative z-10">
+                  {/* Header */}
+                  <div className="flex items-center space-x-4 mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
+                      <Clock className="w-8 h-8 text-white" />
                     </div>
-                    <div className="absolute -top-2 -right-8">
-                      <Sparkles className="w-6 h-6 text-yellow-500 animate-bounce" />
-                    </div>
-                    <div className="absolute -bottom-2 -left-8">
-                      <Gift className="w-5 h-5 text-green-500 animate-pulse" />
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">Time Credit Wallet</h3>
+                      <p className="text-gray-600">Your community currency</p>
                     </div>
                   </div>
-                  <div className="text-lg font-bold text-gray-800 mb-2">Starting Credits</div>
-                  <div className="text-sm text-gray-600 bg-white/70 px-4 py-2 rounded-full inline-block">
-                    🎉 Free welcome bonus!
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-6 mb-6">
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
-                      <TrendingUp className="w-6 h-6 text-white" />
+                  
+                  {/* Credit display with enhanced animation */}
+                  <div className="text-center py-12 bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl border border-blue-100 shadow-inner mb-8 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-100/50 to-purple-100/50 opacity-30"></div>
+                    
+                    <div className="relative z-10">
+                      <div className="relative inline-block">
+                        <div className="text-8xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 animate-pulse">
+                          5
+                        </div>
+                        {/* Floating sparkles */}
+                        <div className="absolute -top-4 -right-12">
+                          <Sparkles className="w-8 h-8 text-yellow-500 animate-bounce" />
+                        </div>
+                        <div className="absolute -bottom-4 -left-12">
+                          <Gift className="w-6 h-6 text-green-500 animate-pulse" />
+                        </div>
+                        <div className="absolute top-1/2 -right-16">
+                          <Star className="w-5 h-5 text-purple-500 animate-spin" />
+                        </div>
+                      </div>
+                      
+                      <div className="text-xl font-bold text-gray-800 mb-3">Starting Credits</div>
+                      <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-100 to-blue-100 px-6 py-3 rounded-full shadow-md">
+                        <span className="text-2xl">🎉</span>
+                        <span className="text-sm font-semibold text-gray-700">Free welcome bonus!</span>
+                      </div>
                     </div>
-                    <div className="text-2xl font-bold text-green-700 mb-1">Earn</div>
-                    <div className="text-xs text-green-600">Help others & grow your wallet</div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
-                      <Star className="w-6 h-6 text-white" />
+                  
+                  {/* Earn/Spend sections with enhanced design */}
+                  <div className="grid grid-cols-2 gap-6 mb-8">
+                    <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+                      <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <TrendingUp className="w-7 h-7 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold text-green-700 mb-2">Earn</div>
+                      <div className="text-sm text-green-600 font-medium">Help others & grow your wallet</div>
                     </div>
-                    <div className="text-2xl font-bold text-purple-700 mb-1">Spend</div>
-                    <div className="text-xs text-purple-600">Get help when you need it</div>
+                    
+                    <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+                      <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <Star className="w-7 h-7 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold text-purple-700 mb-2">Spend</div>
+                      <div className="text-sm text-purple-600 font-medium">Get help when you need it</div>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="text-center">
-                  <button
-                    onClick={handleGetStarted}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 mx-auto"
-                  >
-                    <CreditCard className="w-5 h-5" />
-                    <span>Start Your Journey</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                  
+                  {/* CTA Button */}
+                  <div className="text-center">
+                    <button
+                      onClick={handleGetStarted}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 mx-auto group"
+                    >
+                      <CreditCard className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>Start Your Journey</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
+              
+              {/* Additional floating elements around the card */}
+              <div className="absolute -top-8 -left-8 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full animate-float"></div>
+              <div className="absolute -bottom-8 -right-8 w-20 h-20 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full animate-float-delayed"></div>
             </div>
           </div>
         </div>
+        
+        {/* Custom animations */}
+        <style jsx>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+          }
+          @keyframes float-delayed {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(-180deg); }
+          }
+          .animate-float {
+            animation: float 6s ease-in-out infinite;
+          }
+          .animate-float-delayed {
+            animation: float-delayed 8s ease-in-out infinite;
+          }
+        `}</style>
       </section>
 
       {/* Testimonials */}
