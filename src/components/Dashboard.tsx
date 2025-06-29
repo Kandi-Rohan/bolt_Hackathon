@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Plus, TrendingUp, Users, Award, ArrowRight, Star, Zap, BookOpen, Shield, Megaphone, Gift, Video, FileText, Trophy, Sparkles, CreditCard, Eye, Edit, User, MessageCircle } from 'lucide-react';
+import { Clock, Plus, TrendingUp, Users, Award, ArrowRight, Star, Zap, BookOpen, Shield, Megaphone, Gift, Video, FileText, Trophy, Sparkles, CreditCard, Eye, Edit, User, MessageCircle, Calendar, Target, CheckCircle, BarChart3, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
@@ -16,13 +16,51 @@ const Dashboard: React.FC = () => {
     transaction => transaction.fromUserId === user.id || transaction.toUserId === user.id
   );
 
-  // Calculate credits earned this week
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  
-  const creditsEarnedThisWeek = userTransactions
-    .filter(t => t.type === 'earned' && new Date(t.createdAt) >= oneWeekAgo)
+  // Date calculations
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  // Today's stats
+  const todayTransactions = userTransactions.filter(t => 
+    new Date(t.createdAt) >= today
+  );
+  const todayTasksDone = todayTransactions.filter(t => t.type === 'earned').length;
+  const todayCreditsEarned = todayTransactions
+    .filter(t => t.type === 'earned')
     .reduce((sum, t) => sum + t.amount, 0);
+  const todayTimeSpent = todayTasksDone * 1.5; // Estimate 1.5 hours per task
+
+  // Weekly stats
+  const weeklyTransactions = userTransactions.filter(t => 
+    new Date(t.createdAt) >= weekStart
+  );
+  const weeklyTasksDone = weeklyTransactions.filter(t => t.type === 'earned').length;
+  const weeklyCreditsEarned = weeklyTransactions
+    .filter(t => t.type === 'earned')
+    .reduce((sum, t) => sum + t.amount, 0);
+  const weeklyReviews = 2; // Simulated - in real app, filter reviews by date
+
+  // Monthly stats
+  const monthlyTransactions = userTransactions.filter(t => 
+    new Date(t.createdAt) >= monthStart
+  );
+  const monthlyTasksDone = monthlyTransactions.filter(t => t.type === 'earned').length;
+  const monthlyCreditsEarned = monthlyTransactions
+    .filter(t => t.type === 'earned')
+    .reduce((sum, t) => sum + t.amount, 0);
+  const monthlyReviews = 5; // Simulated
+
+  // Goals and progress
+  const monthlyGoal = 50;
+  const monthlyProgress = Math.min((monthlyCreditsEarned / monthlyGoal) * 100, 100);
+  const weeklyGoal = 3;
+  const weeklyTaskProgress = Math.min((weeklyTasksDone / weeklyGoal) * 100, 100);
+
+  // Calculate credits earned this week for existing stats
+  const creditsEarnedThisWeek = weeklyCreditsEarned;
 
   const stats = [
     {
@@ -35,7 +73,7 @@ const Dashboard: React.FC = () => {
     },
     {
       name: 'My Offers',
-      value: userOffers.filter(offer => offer.status === 'active').length,
+      value: userOffers.filter(offer => offer.status === 'open').length,
       icon: Users,
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50',
@@ -43,7 +81,7 @@ const Dashboard: React.FC = () => {
     },
     {
       name: 'My Requests',
-      value: userRequests.filter(request => request.status === 'active').length,
+      value: userRequests.filter(request => request.status === 'open').length,
       icon: TrendingUp,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
@@ -117,7 +155,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: 'Join Premium Events',
-      description: 'Access exclusive webin ars and skill-building workshops',
+      description: 'Access exclusive webinars and skill-building workshops',
       icon: Trophy,
       credits: '5-15 credits',
       color: 'from-orange-500 to-orange-600',
@@ -265,6 +303,210 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* 3-Part Stats Section */}
+      <div className="space-y-6">
+        {/* 1. Today's Summary */}
+        <div className="bg-white rounded-xl shadow-md border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                <span className="text-white text-xl">🕒</span>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Today's Summary</h2>
+                <p className="text-gray-600 text-sm">Your activity for {today.toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold text-green-700">{todayTasksDone}</span>
+                </div>
+                <p className="text-green-600 font-medium text-sm">Tasks Done Today</p>
+                <p className="text-green-500 text-xs mt-1">
+                  {todayTasksDone > 0 ? 'Great progress!' : 'Start your first task'}
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <Star className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold text-blue-700">{todayCreditsEarned}</span>
+                </div>
+                <p className="text-blue-600 font-medium text-sm">Credits Earned Today</p>
+                <p className="text-blue-500 text-xs mt-1">
+                  {todayCreditsEarned > 0 ? 'Keep it up!' : 'Help others to earn'}
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold text-purple-700">{todayTimeSpent.toFixed(1)}h</span>
+                </div>
+                <p className="text-purple-600 font-medium text-sm">Time Spent Helping</p>
+                <p className="text-purple-500 text-xs mt-1">
+                  {todayTimeSpent > 0 ? 'Making a difference!' : 'Share your skills'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Weekly & Monthly Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Weekly Stats */}
+          <div className="bg-white rounded-xl shadow-md border border-gray-100">
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center">
+                    <span className="text-white text-xl">📅</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">Weekly Stats</h3>
+                    <p className="text-gray-600 text-sm">This week's performance</p>
+                  </div>
+                </div>
+                {weeklyTasksDone >= weeklyGoal && (
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                    <Trophy className="w-3 h-3" />
+                    <span>Goal Achieved!</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900">{weeklyTasksDone}</div>
+                  <div className="text-sm text-gray-600">Total Tasks</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{weeklyCreditsEarned}</div>
+                  <div className="text-sm text-gray-600">Credits</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{weeklyReviews}</div>
+                  <div className="text-sm text-gray-600">Reviews</div>
+                </div>
+              </div>
+              
+              {/* Weekly Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Weekly Task Goal</span>
+                  <span className="font-medium text-gray-900">{weeklyTasksDone}/{weeklyGoal} tasks</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-green-500 to-teal-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${weeklyTaskProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {weeklyTasksDone >= weeklyGoal 
+                    ? '🎉 Congratulations! You\'ve reached your weekly goal!' 
+                    : `${weeklyGoal - weeklyTasksDone} more task${weeklyGoal - weeklyTasksDone !== 1 ? 's' : ''} to reach your goal`
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Monthly Stats */}
+          <div className="bg-white rounded-xl shadow-md border border-gray-100">
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                    <span className="text-white text-xl">📆</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">Monthly Stats</h3>
+                    <p className="text-gray-600 text-sm">{monthStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                  </div>
+                </div>
+                {monthlyCreditsEarned >= monthlyGoal && (
+                  <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                    <Target className="w-3 h-3" />
+                    <span>Goal Smashed!</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-900">{monthlyTasksDone}</div>
+                  <div className="text-sm text-gray-600">Total Tasks</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">{monthlyCreditsEarned}</div>
+                  <div className="text-sm text-gray-600">Credits</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-indigo-600">{monthlyReviews}</div>
+                  <div className="text-sm text-gray-600">Reviews</div>
+                </div>
+              </div>
+              
+              {/* Monthly Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Monthly Credit Goal</span>
+                  <span className="font-medium text-gray-900">{monthlyCreditsEarned}/{monthlyGoal} credits</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-500 relative"
+                    style={{ width: `${monthlyProgress}%` }}
+                  >
+                    {monthlyProgress > 10 && (
+                      <div className="absolute right-2 top-0 h-full flex items-center">
+                        <span className="text-white text-xs font-bold">{Math.round(monthlyProgress)}%</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {monthlyCreditsEarned >= monthlyGoal 
+                    ? '🚀 Amazing! You\'ve exceeded your monthly goal!' 
+                    : `${monthlyGoal - monthlyCreditsEarned} more credits to reach your monthly goal`
+                  }
+                </p>
+              </div>
+              
+              {/* Monthly Insights */}
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-3 border border-purple-200">
+                <div className="flex items-center space-x-2 mb-1">
+                  <BarChart3 className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-700">Monthly Insights</span>
+                </div>
+                <p className="text-xs text-purple-600">
+                  {monthlyCreditsEarned > 0 
+                    ? `You're earning an average of ${(monthlyCreditsEarned / Math.max(1, now.getDate())).toFixed(1)} credits per day this month!`
+                    : 'Start helping others to see your monthly progress!'
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => {
@@ -338,7 +580,7 @@ const Dashboard: React.FC = () => {
                       <h4 className="font-medium text-gray-900">{offer.taskType}</h4>
                       <div className="flex items-center space-x-2">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          offer.status === 'active' ? 'bg-green-100 text-green-700' :
+                          offer.status === 'open' ? 'bg-green-100 text-green-700' :
                           offer.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-gray-100 text-gray-700'
                         }`}>
@@ -401,8 +643,8 @@ const Dashboard: React.FC = () => {
                       <h4 className="font-medium text-gray-900">{request.taskType}</h4>
                       <div className="flex items-center space-x-2">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          request.status === 'active' ? 'bg-blue-100 text-blue-700' :
-                          request.status === 'matched' ? 'bg-yellow-100 text-yellow-700' :
+                          request.status === 'open' ? 'bg-blue-100 text-blue-700' :
+                          request.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-gray-100 text-gray-700'
                         }`}>
                           {request.status}
