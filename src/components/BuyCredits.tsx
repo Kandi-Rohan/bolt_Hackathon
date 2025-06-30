@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Clock, CreditCard, Check, Star, Zap, Crown, Gift, Sparkles, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/useToast';
 
 const BuyCredits: React.FC = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -69,20 +71,32 @@ const BuyCredits: React.FC = () => {
   const handlePurchase = async (planId: string) => {
     if (!user) return;
     
-    setIsProcessing(true);
     const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+
+    setIsProcessing(true);
+    setSelectedPlan(planId);
     
-    if (plan) {
-      // Simulate payment processing
+    try {
+      // Simulate payment processing with realistic delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Update user credits
+      // Update user credits immediately
       const newCredits = user.timeCredits + plan.credits;
       updateUser({ timeCredits: newCredits });
       
+      showSuccess('✅ Purchase Successful!', `Successfully purchased ${plan.credits} credits! Your new balance: ${newCredits} credits`);
+      
+      // Navigate back to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+      
+    } catch (error) {
+      showError('Purchase Failed', 'Something went wrong. Please try again.');
+    } finally {
       setIsProcessing(false);
-      alert(`Successfully purchased ${plan.credits} credits! Your new balance: ${newCredits} credits`);
-      navigate('/dashboard');
+      setSelectedPlan(null);
     }
   };
 
@@ -163,9 +177,11 @@ const BuyCredits: React.FC = () => {
               <button
                 onClick={() => handlePurchase(plan.id)}
                 disabled={isProcessing}
-                className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105`}
+                className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 ${
+                  isProcessing && selectedPlan === plan.id ? 'animate-pulse' : ''
+                }`}
               >
-                {isProcessing ? (
+                {isProcessing && selectedPlan === plan.id ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Processing...

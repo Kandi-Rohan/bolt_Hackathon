@@ -34,6 +34,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
           setError('Invalid email or password');
         }
       } else {
+        // Enhanced validation for signup
         if (name.trim().length < 2) {
           setError('Name must be at least 2 characters long');
           setLoading(false);
@@ -41,7 +42,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         }
         
         if (city.trim().length < 2) {
-          setError('Please enter your city/location');
+          setError('Location is required and must be at least 2 characters');
           setLoading(false);
           return;
         }
@@ -54,6 +55,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         
         if (password.length < 6) {
           setError('Password must be at least 6 characters long');
+          setLoading(false);
+          return;
+        }
+
+        if (!email.includes('@')) {
+          setError('Please enter a valid email address');
           setLoading(false);
           return;
         }
@@ -96,7 +103,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
+                  Full Name *
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -108,6 +115,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Enter your full name"
                     required={!isLogin}
+                    minLength={2}
                   />
                 </div>
               </div>
@@ -116,7 +124,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
             {!isLogin && (
               <div>
                 <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                  City/Location
+                  City/Location *
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -128,6 +136,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Enter your city"
                     required={!isLogin}
+                    minLength={2}
                   />
                 </div>
               </div>
@@ -153,7 +162,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                Password {!isLogin && '(min 6 characters)'}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -165,6 +174,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your password"
                   required
+                  minLength={!isLogin ? 6 : undefined}
                 />
                 <button
                   type="button"
@@ -179,7 +189,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
             {!isLogin && (
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
+                  Confirm Password *
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -188,7 +198,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      confirmPassword && password !== confirmPassword 
+                        ? 'border-red-300 bg-red-50' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder="Confirm your password"
                     required={!isLogin}
                   />
@@ -200,6 +214,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-red-600 text-sm mt-1">Passwords do not match</p>
+                )}
               </div>
             )}
 
@@ -211,7 +228,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (!isLogin && password !== confirmPassword)}
               className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-600 hover:to-green-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
@@ -235,6 +252,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
                   setError('');
                   setConfirmPassword('');
                   setCity('');
+                  setName('');
                 }}
                 className="ml-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >

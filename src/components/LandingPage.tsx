@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Award, ArrowRight, CheckCircle, Star, Zap, TrendingUp, Heart, Sparkles, Gift, CreditCard } from 'lucide-react';
+import { Clock, Users, Award, ArrowRight, CheckCircle, Star, Zap, TrendingUp, Heart, Sparkles, Gift, CreditCard, ExternalLink } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -247,17 +247,17 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="py-16 md:py-24 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
+      <section id="home" className="py-12 sm:py-16 md:py-24 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
         {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full -translate-x-48 -translate-y-48 blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-green-200/20 to-blue-200/20 rounded-full translate-x-40 translate-y-40 blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-72 sm:w-96 h-72 sm:h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full -translate-x-48 -translate-y-48 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-gradient-to-tl from-green-200/20 to-blue-200/20 rounded-full translate-x-40 translate-y-40 blur-3xl"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left Column - Content */}
             <div className="text-center lg:text-left">
               {/* Trust indicators */}
-              <div className="flex items-center justify-center lg:justify-start space-x-6 mb-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
                 <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">
                   <div className="flex -space-x-1">
                     {[...Array(5)].map((_, i) => (
@@ -274,7 +274,7 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* Main headline */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 leading-tight">
                 Your Skills Have{' '}
                 <span className="relative">
                   <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 bg-clip-text text-transparent">
@@ -285,7 +285,7 @@ const LandingPage: React.FC = () => {
               </h1>
               
               {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
                 Create custom tasks, set your own prices, and connect with a community that values your expertise.
               </p>
 
@@ -309,15 +309,15 @@ const LandingPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
                 <button
                   onClick={handleGetStarted}
-                  className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-blue-700 transition-all duration-300 flex items-center space-x-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 min-w-[280px] justify-center"
+                  className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-blue-700 hover:via-purple-700 hover:to-blue-700 transition-all duration-300 flex items-center space-x-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto justify-center"
                 >
                   <span>{user ? 'Go to Dashboard' : 'Start Earning Credits'}</span>
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
                 
-                <button className="group bg-white/90 backdrop-blur-sm text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white transition-all duration-300 flex items-center space-x-3 shadow-lg hover:shadow-xl border border-gray-200 min-w-[280px] justify-center">
+                <button className="group bg-white/90 backdrop-blur-sm text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:bg-white transition-all duration-300 flex items-center space-x-3 shadow-lg hover:shadow-xl border border-gray-200 w-full sm:w-auto justify-center">
                   <span>Watch How It Works</span>
-                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                     <div className="w-0 h-0 border-l-[6px] border-l-white border-y-[4px] border-y-transparent ml-0.5"></div>
                   </div>
                 </button>
@@ -343,45 +343,45 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* Hero Stats - Enhanced Design */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
-            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mt-12 sm:mt-16">
+            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
               </div>
-              <div className="text-4xl font-black text-blue-600 mb-2">500+</div>
+              <div className="text-3xl sm:text-4xl font-black text-blue-600 mb-2">500+</div>
               <div className="text-gray-700 font-semibold">Active Community Members</div>
               <div className="text-sm text-gray-500 mt-2">Growing every day</div>
             </div>
             
-            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
               </div>
-              <div className="text-4xl font-black text-green-600 mb-2">∞</div>
+              <div className="text-3xl sm:text-4xl font-black text-green-600 mb-2">∞</div>
               <div className="text-gray-700 font-semibold">Custom Tasks Created</div>
               <div className="text-sm text-gray-500 mt-2">Unlimited possibilities</div>
             </div>
             
-            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <TrendingUp className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
               </div>
-              <div className="text-4xl font-black text-purple-600 mb-2">2,000+</div>
+              <div className="text-3xl sm:text-4xl font-black text-purple-600 mb-2">2,000+</div>
               <div className="text-gray-700 font-semibold">Credits Exchanged</div>
               <div className="text-sm text-gray-500 mt-2">Value created together</div>
             </div>
           </div>
 
           {/* Social proof */}
-          <div className="mt-12 text-center">
+          <div className="mt-8 sm:mt-12 text-center">
             <p className="text-gray-600 mb-4">Trusted by professionals from</p>
-            <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 opacity-60">
               <div className="text-gray-500 font-semibold">Google</div>
               <div className="text-gray-500 font-semibold">Microsoft</div>
               <div className="text-gray-500 font-semibold">Amazon</div>
@@ -394,33 +394,33 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
+      <section id="features" className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               How TimeBank Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
               A flexible platform where you create your own tasks and set your own prices
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               
               return (
                 <div key={index} className="text-center group">
-                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center ${
+                  <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 rounded-2xl flex items-center justify-center ${
                     feature.color === 'blue' ? 'bg-gradient-to-br from-blue-100 to-blue-200' :
                     feature.color === 'green' ? 'bg-gradient-to-br from-green-100 to-green-200' : 'bg-gradient-to-br from-purple-100 to-purple-200'
                   } group-hover:scale-110 transition-transform duration-200`}>
-                    <Icon className={`w-8 h-8 ${
+                    <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${
                       feature.color === 'blue' ? 'text-blue-600' :
                       feature.color === 'green' ? 'text-green-600' : 'text-purple-600'
                     }`} />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                     {feature.title}
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
@@ -432,13 +432,13 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* Process Steps */}
-          <div className="mt-20 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-8">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Get Started in 3 Simple Steps</h3>
+          <div className="mt-16 sm:mt-20 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-6 sm:p-8">
+            <div className="text-center mb-8 sm:mb-12">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Get Started in 3 Simple Steps</h3>
               <p className="text-gray-600">Join and start earning credits in minutes</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {[
                 { step: '1', title: 'Sign Up & Buy Credits', desc: 'Join with 5 free credits, then buy more as needed', icon: Zap },
                 { step: '2', title: 'Create Custom Tasks', desc: 'Post what you can do or what you need help with', icon: Users },
@@ -447,16 +447,16 @@ const LandingPage: React.FC = () => {
                 const Icon = item.icon;
                 return (
                   <div key={index} className="text-center">
-                    <div className="relative mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
-                        <Icon className="w-8 h-8 text-white" />
+                    <div className="relative mb-4 sm:mb-6">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                        <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-white border-2 border-blue-600 rounded-full flex items-center justify-center text-sm font-bold text-blue-600 shadow-md">
+                      <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-white border-2 border-blue-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold text-blue-600 shadow-md">
                         {item.step}
                       </div>
                     </div>
                     <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
-                    <p className="text-gray-600">{item.desc}</p>
+                    <p className="text-gray-600 text-sm sm:text-base">{item.desc}</p>
                   </div>
                 );
               })}
@@ -466,18 +466,18 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section id="how-it-works" className="py-16 sm:py-24 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               What Can You Do on TimeBank?
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl text-gray-600">
               Create any task you can imagine - the possibilities are endless
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 category: 'Programming & Tech',
@@ -516,12 +516,12 @@ const LandingPage: React.FC = () => {
                 color: 'from-pink-500 to-pink-600'
               }
             ].map((category, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+              <div key={index} className="bg-white rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
                 <div className="flex items-center mb-4">
-                  <div className={`w-12 h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center mr-4`}>
-                    <span className="text-2xl">{category.icon}</span>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center mr-3 sm:mr-4`}>
+                    <span className="text-lg sm:text-2xl">{category.icon}</span>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">{category.category}</h3>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900">{category.category}</h3>
                 </div>
                 <ul className="space-y-2">
                   {category.examples.map((example, idx) => (
@@ -538,26 +538,26 @@ const LandingPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-blue-100 max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Your Task, Your Price, Your Way</h3>
+          <div className="text-center mt-8 sm:mt-12">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-blue-100 max-w-3xl mx-auto">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Your Task, Your Price, Your Way</h3>
               <p className="text-gray-600 mb-6">
                 Unlike other platforms, TimeBank gives you complete freedom to create any task you want and set your own credit value. 
                 Whether you need help with something specific or want to offer your unique skills, you're in control.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                 <div className="p-4">
-                  <div className="text-3xl mb-2">🎯</div>
+                  <div className="text-2xl sm:text-3xl mb-2">🎯</div>
                   <h4 className="font-semibold text-gray-900">Custom Tasks</h4>
                   <p className="text-sm text-gray-600">Create exactly what you need</p>
                 </div>
                 <div className="p-4">
-                  <div className="text-3xl mb-2">💰</div>
+                  <div className="text-2xl sm:text-3xl mb-2">💰</div>
                   <h4 className="font-semibold text-gray-900">Your Pricing</h4>
                   <p className="text-sm text-gray-600">Set credits based on complexity</p>
                 </div>
                 <div className="p-4">
-                  <div className="text-3xl mb-2">🌐</div>
+                  <div className="text-2xl sm:text-3xl mb-2">🌐</div>
                   <h4 className="font-semibold text-gray-900">Online/Offline</h4>
                   <p className="text-sm text-gray-600">Choose how you want to work</p>
                 </div>
@@ -568,37 +568,37 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Benefits Section - Enhanced */}
-      <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+      <section className="py-16 sm:py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
         {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-x-36 -translate-y-36 blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-green-200/30 to-blue-200/30 rounded-full translate-x-48 translate-y-48 blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-48 sm:w-72 h-48 sm:h-72 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-x-24 sm:-translate-x-36 -translate-y-24 sm:-translate-y-36 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-gradient-to-tl from-green-200/30 to-blue-200/30 rounded-full translate-x-32 sm:translate-x-48 translate-y-32 sm:translate-y-48 blur-3xl"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 items-center">
             <div>
               <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-full mb-6">
                 <Heart className="w-5 h-5 text-purple-600" />
                 <span className="text-purple-700 font-medium text-sm">Community First</span>
               </div>
               
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Why Choose{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   TimeBank?
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
                 Join a thriving community where your skills are valued fairly and everyone benefits from collaborative knowledge sharing.
               </p>
               
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-4 group">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-200">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-200">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
-                    <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">{benefit}</span>
+                    <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors text-sm sm:text-base">{benefit}</span>
                   </div>
                 ))}
               </div>
@@ -606,80 +606,80 @@ const LandingPage: React.FC = () => {
               <div className="mt-10">
                 <button
                   onClick={handleGetStarted}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2"
                 >
                   <span>Join Our Community</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
             
             <div className="relative">
               {/* Enhanced wallet card with better visual design */}
-              <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-8 border border-blue-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+              <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-6 sm:p-8 border border-blue-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
                 {/* Floating decorative elements */}
-                <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full animate-bounce"></div>
-                <div className="absolute bottom-6 left-6 w-12 h-12 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full animate-pulse"></div>
-                <div className="absolute top-1/2 right-8 w-8 h-8 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-ping"></div>
+                <div className="absolute top-4 right-4 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full animate-bounce"></div>
+                <div className="absolute bottom-6 left-6 w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-tr from-green-400/20 to-blue-400/20 rounded-full animate-pulse"></div>
+                <div className="absolute top-1/2 right-8 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-ping"></div>
                 
                 <div className="relative z-10">
                   {/* Header */}
-                  <div className="flex items-center space-x-4 mb-8">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
-                      <Clock className="w-8 h-8 text-white" />
+                  <div className="flex items-center space-x-4 mb-6 sm:mb-8">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
+                      <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">Time Credit Wallet</h3>
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900">Time Credit Wallet</h3>
                       <p className="text-gray-600">Your community currency</p>
                     </div>
                   </div>
                   
                   {/* Credit display with enhanced animation */}
-                  <div className="text-center py-12 bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl border border-blue-100 shadow-inner mb-8 relative overflow-hidden">
+                  <div className="text-center py-8 sm:py-12 bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl border border-blue-100 shadow-inner mb-6 sm:mb-8 relative overflow-hidden">
                     {/* Background pattern */}
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-100/50 to-purple-100/50 opacity-30"></div>
                     
                     <div className="relative z-10">
                       <div className="relative inline-block">
-                        <div className="text-8xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 animate-pulse">
+                        <div className="text-6xl sm:text-8xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 animate-pulse">
                           5
                         </div>
                         {/* Floating sparkles */}
-                        <div className="absolute -top-4 -right-12">
-                          <Sparkles className="w-8 h-8 text-yellow-500 animate-bounce" />
+                        <div className="absolute -top-4 -right-8 sm:-right-12">
+                          <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 animate-bounce" />
                         </div>
-                        <div className="absolute -bottom-4 -left-12">
-                          <Gift className="w-6 h-6 text-green-500 animate-pulse" />
+                        <div className="absolute -bottom-4 -left-8 sm:-left-12">
+                          <Gift className="w-4 h-4 sm:w-6 sm:h-6 text-green-500 animate-pulse" />
                         </div>
-                        <div className="absolute top-1/2 -right-16">
-                          <Star className="w-5 h-5 text-purple-500 animate-spin" />
+                        <div className="absolute top-1/2 -right-12 sm:-right-16">
+                          <Star className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 animate-spin" />
                         </div>
                       </div>
                       
-                      <div className="text-xl font-bold text-gray-800 mb-3">Starting Credits</div>
-                      <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-100 to-blue-100 px-6 py-3 rounded-full shadow-md">
-                        <span className="text-2xl">🎉</span>
-                        <span className="text-sm font-semibold text-gray-700">Free welcome bonus!</span>
+                      <div className="text-lg sm:text-xl font-bold text-gray-800 mb-3">Starting Credits</div>
+                      <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-100 to-blue-100 px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-md">
+                        <span className="text-xl sm:text-2xl">🎉</span>
+                        <span className="text-xs sm:text-sm font-semibold text-gray-700">Free welcome bonus!</span>
                       </div>
                     </div>
                   </div>
                   
                   {/* Earn/Spend sections with enhanced design */}
-                  <div className="grid grid-cols-2 gap-6 mb-8">
-                    <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-                      <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <TrendingUp className="w-7 h-7 text-white" />
+                  <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+                        <TrendingUp className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-green-700 mb-2">Earn</div>
-                      <div className="text-sm text-green-600 font-medium">Help others & grow your wallet</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-green-700 mb-2">Earn</div>
+                      <div className="text-xs sm:text-sm text-green-600 font-medium">Help others & grow your wallet</div>
                     </div>
                     
-                    <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-                      <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <Star className="w-7 h-7 text-white" />
+                    <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+                        <Star className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-purple-700 mb-2">Spend</div>
-                      <div className="text-sm text-purple-600 font-medium">Get help when you need it</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-purple-700 mb-2">Spend</div>
+                      <div className="text-xs sm:text-sm text-purple-600 font-medium">Get help when you need it</div>
                     </div>
                   </div>
                   
@@ -687,19 +687,19 @@ const LandingPage: React.FC = () => {
                   <div className="text-center">
                     <button
                       onClick={handleGetStarted}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 mx-auto group"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center space-x-2 mx-auto group"
                     >
-                      <CreditCard className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
                       <span>Start Your Journey</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
                 </div>
               </div>
               
               {/* Additional floating elements around the card */}
-              <div className="absolute -top-8 -left-8 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full animate-float"></div>
-              <div className="absolute -bottom-8 -right-8 w-20 h-20 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full animate-float-delayed"></div>
+              <div className="absolute -top-8 -left-8 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full animate-float"></div>
+              <div className="absolute -bottom-8 -right-8 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full animate-float-delayed"></div>
             </div>
           </div>
         </div>
@@ -724,34 +724,34 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section id="testimonials" className="py-16 sm:py-24 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               What Our Community Says
             </h2>
             <div className="flex items-center justify-center space-x-4 mb-4">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+                  <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <span className="text-2xl font-bold text-gray-900">{averageRating.toFixed(1)}/5</span>
+              <span className="text-xl sm:text-2xl font-bold text-gray-900">{averageRating.toFixed(1)}/5</span>
               <span className="text-gray-600">Average Rating</span>
             </div>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl text-gray-600">
               Real feedback from TimeBank members across India
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 border border-gray-100 shadow-md hover:shadow-lg transition-shadow duration-200">
+              <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-md hover:shadow-lg transition-shadow duration-200">
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star 
                       key={i} 
-                      className={`w-5 h-5 ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 ${
                         i < testimonial.rating 
                           ? 'text-yellow-400 fill-current' 
                           : 'text-gray-300'
@@ -760,14 +760,14 @@ const LandingPage: React.FC = () => {
                   ))}
                   <span className="ml-2 text-sm text-gray-600">({testimonial.rating}/5)</span>
                 </div>
-                <p className="text-gray-700 mb-6 leading-relaxed">"{testimonial.content}"</p>
+                <p className="text-gray-700 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">"{testimonial.content}"</p>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm">
                     {testimonial.initials}
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                    <div className="text-gray-600 text-sm">{testimonial.role}</div>
+                    <div className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.name}</div>
+                    <div className="text-gray-600 text-xs sm:text-sm">{testimonial.role}</div>
                   </div>
                 </div>
               </div>
@@ -777,28 +777,28 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600">
+      <section className="py-16 sm:py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Ready to Join the TimeBank Community?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-lg sm:text-xl text-blue-100 mb-8">
             Start creating custom tasks and connecting with skilled community members today!
           </p>
           <button
             onClick={handleGetStarted}
-            className="inline-flex items-center space-x-2 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="inline-flex items-center space-x-2 bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             <span>{user ? 'Go to Dashboard' : 'Get Started Now'}</span>
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
+      <footer className="bg-gray-900 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
@@ -834,6 +834,22 @@ const LandingPage: React.FC = () => {
                 <li><a href="#" className="hover:text-white transition-colors">Social Media</a></li>
               </ul>
             </div>
+          </div>
+          
+          {/* Built with Bolt.new Badge */}
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div className="text-gray-500 text-sm">
+              Made with ❤️ for the community
+            </div>
+            <a
+              href="https://bolt.new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+            >
+              <span>Built with Bolt.new</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </footer>

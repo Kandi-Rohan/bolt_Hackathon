@@ -97,31 +97,31 @@ const Leaderboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-green-600 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-green-600 rounded-2xl p-6 sm:p-8 text-white">
         <div className="text-center">
-          <Trophy className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Community Leaderboard</h1>
-          <p className="text-blue-100 text-lg">
+          <Trophy className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4" />
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Community Leaderboard</h1>
+          <p className="text-blue-100 text-base sm:text-lg">
             Celebrating our most generous community members
           </p>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.name} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div key={stat.name} className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium">{stat.name}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
                 </div>
-                <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center`}>
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -131,10 +131,10 @@ const Leaderboard: React.FC = () => {
 
       {/* Online Users Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-100">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-              <Users className="w-6 h-6 mr-2 text-green-600" />
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-green-600" />
               Community Members Online
             </h2>
             <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -144,11 +144,11 @@ const Leaderboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {onlineUsers.length === 0 ? (
             <div className="text-center py-8">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No members online</p>
+              <p className="text-gray-500">🪄 No members online — be the first to join!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -207,35 +207,35 @@ const Leaderboard: React.FC = () => {
 
       {/* Top 3 Podium */}
       {allUsers.length >= 3 && (
-        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Top Contributors</h2>
+        <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-900 mb-6 sm:mb-8">Top Contributors</h2>
           
-          <div className="flex items-end justify-center space-x-8">
+          <div className="flex items-end justify-center space-x-4 sm:space-x-8">
             {/* 2nd Place */}
             <div className="text-center">
-              <div className="w-20 h-16 bg-gradient-to-t from-gray-400 to-gray-300 rounded-t-lg flex items-end justify-center pb-2">
-                <span className="text-white font-bold text-lg">2</span>
+              <div className="w-16 h-12 sm:w-20 sm:h-16 bg-gradient-to-t from-gray-400 to-gray-300 rounded-t-lg flex items-end justify-center pb-2">
+                <span className="text-white font-bold text-base sm:text-lg">2</span>
               </div>
               <div className="mt-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Medal className="w-8 h-8 text-gray-500" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Medal className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500" />
                 </div>
-                <h3 className="font-semibold text-gray-900">{allUsers[1]?.name || 'TBD'}</h3>
-                <p className="text-sm text-gray-600">{allUsers[1]?.totalTimeGiven || 0} hours</p>
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{allUsers[1]?.name || 'TBD'}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">{allUsers[1]?.totalTimeGiven || 0} hours</p>
               </div>
             </div>
 
             {/* 1st Place */}
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg flex items-end justify-center pb-2">
-                <span className="text-white font-bold text-xl">1</span>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg flex items-end justify-center pb-2">
+                <span className="text-white font-bold text-lg sm:text-xl">1</span>
               </div>
               <div className="mt-4">
-                <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2 ring-4 ring-yellow-200">
-                  <Crown className="w-10 h-10 text-yellow-500" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2 ring-4 ring-yellow-200">
+                  <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-500" />
                 </div>
-                <h3 className="font-semibold text-gray-900 text-lg">{allUsers[0]?.name || 'TBD'}</h3>
-                <p className="text-sm text-gray-600">{allUsers[0]?.totalTimeGiven || 0} hours</p>
+                <h3 className="font-semibold text-gray-900 text-base sm:text-lg">{allUsers[0]?.name || 'TBD'}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">{allUsers[0]?.totalTimeGiven || 0} hours</p>
                 <span className="inline-block mt-1 px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
                   Champion
                 </span>
@@ -244,15 +244,15 @@ const Leaderboard: React.FC = () => {
 
             {/* 3rd Place */}
             <div className="text-center">
-              <div className="w-20 h-12 bg-gradient-to-t from-amber-600 to-amber-500 rounded-t-lg flex items-end justify-center pb-2">
-                <span className="text-white font-bold">3</span>
+              <div className="w-16 h-10 sm:w-20 sm:h-12 bg-gradient-to-t from-amber-600 to-amber-500 rounded-t-lg flex items-end justify-center pb-2">
+                <span className="text-white font-bold text-sm sm:text-base">3</span>
               </div>
               <div className="mt-4">
-                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Award className="w-8 h-8 text-amber-600" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Award className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900">{allUsers[2]?.name || 'TBD'}</h3>
-                <p className="text-sm text-gray-600">{allUsers[2]?.totalTimeGiven || 0} hours</p>
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{allUsers[2]?.name || 'TBD'}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">{allUsers[2]?.totalTimeGiven || 0} hours</p>
               </div>
             </div>
           </div>
@@ -261,8 +261,8 @@ const Leaderboard: React.FC = () => {
 
       {/* Full Leaderboard */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900">All Members</h2>
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">All Members</h2>
           <p className="text-gray-600 text-sm mt-1">Ranked by total time contributed</p>
         </div>
         
@@ -270,8 +270,7 @@ const Leaderboard: React.FC = () => {
           {allUsers.length === 0 ? (
             <div className="p-8 text-center">
               <Trophy className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No members yet</p>
-              <p className="text-gray-400 text-sm mt-1">Be the first to start helping others!</p>
+              <p className="text-gray-500">🪄 No members yet — be the first to start helping others!</p>
             </div>
           ) : (
             allUsers.map((member, index) => {
@@ -283,54 +282,54 @@ const Leaderboard: React.FC = () => {
               return (
                 <div
                   key={member.id}
-                  className={`p-6 flex items-center justify-between hover:bg-gray-50 transition-colors ${
+                  className={`p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors ${
                     isCurrentUser ? 'bg-blue-50 border-l-4 border-blue-500' : ''
                   }`}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-8 h-8">
+                  <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                    <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
                       {rank <= 3 ? (
-                        <span className={`text-lg font-bold ${
+                        <span className={`text-base sm:text-lg font-bold ${
                           rank === 1 ? 'text-yellow-500' : 
                           rank === 2 ? 'text-gray-500' : 'text-amber-600'
                         }`}>
                           #{rank}
                         </span>
                       ) : (
-                        <span className="text-gray-400 font-medium">#{rank}</span>
+                        <span className="text-gray-400 font-medium text-sm sm:text-base">#{rank}</span>
                       )}
                     </div>
 
-                    <div className={`w-12 h-12 ${badge.bgColor} rounded-full flex items-center justify-center`}>
-                      <BadgeIcon className={`w-6 h-6 ${badge.color}`} />
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 ${badge.bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
+                      <BadgeIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${badge.color}`} />
                     </div>
 
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
                           {member.name}
                           {isCurrentUser && (
-                            <span className="ml-2 text-blue-600 text-sm font-medium">(You)</span>
+                            <span className="ml-2 text-blue-600 text-xs sm:text-sm font-medium">(You)</span>
                           )}
                         </h3>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm text-gray-600 mt-1">
                         <span className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                           {member.totalTimeGiven} hours given
                         </span>
-                        <span className={`px-2 py-1 ${badge.bgColor} ${badge.color} text-xs font-medium rounded-full`}>
+                        <span className={`px-2 py-1 ${badge.bgColor} ${badge.color} text-xs font-medium rounded-full mt-1 sm:mt-0 self-start`}>
                           {badge.name}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-gray-900">
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-base sm:text-lg font-bold text-gray-900">
                       {member.timeCredits}
                     </div>
-                    <div className="text-sm text-gray-600">Credits</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Credits</div>
                   </div>
                 </div>
               );
@@ -340,28 +339,28 @@ const Leaderboard: React.FC = () => {
       </div>
 
       {/* Achievement Info */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">How to Earn Badges</h3>
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 sm:p-6 border border-purple-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">How to Earn Badges</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex items-center space-x-3">
-            <Crown className="w-8 h-8 text-yellow-500" />
+            <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 flex-shrink-0" />
             <div>
-              <p className="font-medium text-gray-900">Champion</p>
-              <p className="text-sm text-gray-600">Be #1 helper</p>
+              <p className="font-medium text-gray-900 text-sm sm:text-base">Champion</p>
+              <p className="text-xs sm:text-sm text-gray-600">Be #1 helper</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Star className="w-8 h-8 text-purple-500" />
+            <Star className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 flex-shrink-0" />
             <div>
-              <p className="font-medium text-gray-900">Super Helper</p>
-              <p className="text-sm text-gray-600">Give 10+ hours</p>
+              <p className="font-medium text-gray-900 text-sm sm:text-base">Super Helper</p>
+              <p className="text-xs sm:text-sm text-gray-600">Give 10+ hours</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Zap className="w-8 h-8 text-blue-500" />
+            <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 flex-shrink-0" />
             <div>
-              <p className="font-medium text-gray-900">Rising Star</p>
-              <p className="text-sm text-gray-600">Give 5+ hours</p>
+              <p className="font-medium text-gray-900 text-sm sm:text-base">Rising Star</p>
+              <p className="text-xs sm:text-sm text-gray-600">Give 5+ hours</p>
             </div>
           </div>
         </div>
